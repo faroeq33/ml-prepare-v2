@@ -1,35 +1,119 @@
 import {
+  DrawingUtils,
   FilesetResolver,
   HandLandmarker,
-  HandLandmarkerOptions,
 } from "@mediapipe/tasks-vision";
-import React, { useState, useEffect } from "react";
-import WebcamLayout from "./layouts/WebcamLayout";
+import { useEffect, useRef, useState } from "react";
 
+import Webcam from "react-webcam";
+
+const videoConstraints = {
+  width: 480,
+  height: 270,
+  facingMode: "user",
+};
 const App = () => {
-  const [handLandmarker, setHandLandmarker] = useState<
-    HandLandmarker | undefined
-  >();
-  const [results, setResults] = useState(undefined);
-  const [myPoses, setMyPoses] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
+  const landmarkerRef = useRef<HandLandmarker | null>(null);
+  const canvasRef = useRef(null);
+  const drawingUtilsRef = useRef(null);
+  const [poseData, setPoseData] = useState([]);
+  const [errorMesage, setErrorMessage] = useState("");
 
-  // const onCapturePose = () => {
-  //   if (!results) {
-  //     setErrorMessage(
-  //       "The 'results' global variable is not set yet. Turn on your webcam to detect your hand pose and click the button again."
-  //     );
-  //     return;
-  //   }
+  const [labeledPose, setLabledPose] = useState({
+    label: "untitled",
+    vector: [1, 3, 4, 5],
+  });
 
-  //   const labeledPose = {
-  //     label: getLabelValue(), //
-  //     vector: convertPoseToVector(results.landmarks[0]),
-  //   };
+  const [label, setLabel] = useState("");
+  const webcamRef = useRef(null);
 
-  //   setMyPoses([...myPoses, labeledPose]);
-  //   saveCount();
-  // };
+  useEffect(() => {
+    const ctx = canvasRef.current.getContext("2d");
+    // write so it can only make 1 drawing util instance
+    drawingUtilsRef.current = new DrawingUtils(ctx);
+  }, []);
+  // laad het landmarker model in de landmarkerRef
+
+  useEffect(() => {
+    const canvasContext = canvasRef.current.getContext("2d");
+    if (drawingUtilsRef.current) {
+      canvasContext.clearRect(0, 0, 480, 270);
+      for (const hand of poseData) {
+        drawingUtilsRef.current.drawConnectors(
+          hand,
+          HandLandmarker.HAND_CONNECTIONS,
+          { color: "#00FF00", lineWidth: 5 }
+        );
+        drawingUtilsRef.current.drawLandmarks(hand, {
+          radius: 4,
+          color: "#FF0000",
+          lineWidth: 2,
+        });
+      }
+    }
+  }, [poseData]);
+
+  const onCapturePose = () => {
+    // console.log("handled form");
+    if (!poseData) {
+      setErrorMessage(
+        "Turn on your webcam to detect your hand pose and click the button again."
+      );
+      return;
+    }
+
+    console.log(poseData[0]);
+    function convertPoseToVector(pose) {
+      return pose
+        .map((point) => {
+          return [point.x, point.y, point.z];
+        })
+        .flat();
+    }
+
+    const labeledPose = {
+      label: label, //
+      vector: convertPoseToVector(poseData[0]),
+    };
+
+    setLabledPose(labeledPose);
+    // saveCount();
+  };
+
+  const capture = async () => {
+    if (landmarkerRef.current && webcamRef.current.getCanvas("2d")) {
+      if (webcamRef.current.video.currentTime > 0) {
+        const result = await landmarkerRef.current.detectForVideo(
+          webcamRef.current.video,
+          performance.now()
+        );
+        if (result.landmarks) {
+          setPoseData(result.landmarks);
+        }
+      }
+    }
+    requestAnimationFrame(capture);
+  };
+  useEffect(() => {
+    const createHandLandmarker = async () => {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+      );
+      const handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+          delegate: "GPU",
+        },
+        runningMode: "VIDEO",
+        numHands: 2,
+      });
+      landmarkerRef.current = handLandmarker;
+      console.log("handlandmarker is created!");
+      // start capturing - zie hieronder
+      capture();
+    };
+    createHandLandmarker();
+  }, []);
 
   // const onSavePoses = () => {
   //   savePosesToFile();
@@ -74,30 +158,53 @@ const App = () => {
   //   URL.revokeObjectURL(url);
   // };
 
-  // const getLabelValue = () => {
-  //   const labelValue = document.getElementById("poseLabel").value;
-  //   if (!labelValue) {
-  //     setErrorMessage("Please enter a label for the pose");
-  //     return;
-  //   }
-  //   return labelValue;
-  // };
-
   return (
     <div>
-      <WebcamLayout />
+      <section className="videosection">
+        {/* <Coordinates poseData={poseData} /> */}
+        <Webcam
+          width={videoConstraints.width}
+          height={videoConstraints.height}
+          mirrored={true}
+          id="webcam"
+          audio={false}
+          videoConstraints={videoConstraints}
+          ref={webcamRef}
+        />
+        <canvas
+          ref={canvasRef}
+          width={videoConstraints.width}
+          height={videoConstraints.height}
+        ></canvas>
+      </section>
+      {/* <WebcamLayout poseData={poseData} setPoseData={setPoseData} /> */}
       {/* Your JSX content here */}
 
-      {/* <button id="captureHandPose" onClick={onCapturePose}>
+      <div className="div">My label : {label}</div>
+      <input
+        type="text"
+        name="label"
+        placeholder="say label here"
+        onChange={(e) => {
+          setLabel(e.currentTarget.value);
+        }}
+      />
+      <button type="submit" id="captureHandPose" onClick={onCapturePose}>
         Capture Hand Pose
       </button>
-      <button id="savePosesButton" onClick={onSavePoses}>
+
+      <textarea>{JSON.stringify(labeledPose)}</textarea>
+
+      {/* {JSON.stringify(poseData[0])} */}
+
+      {/* <button id="savePosesButton" onClick={onSavePoses}>
         Save Poses
       </button>
       <button id="showPoses" onClick={showData}>
         Show Poses
       </button>
-      <div id="errors">{errorMessage}</div> */}
+*/}
+      <div id="errors">{errorMesage}</div>
     </div>
   );
 };
