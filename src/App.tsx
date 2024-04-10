@@ -10,34 +10,9 @@ const App = () => {
   const [handLandmarker, setHandLandmarker] = useState<
     HandLandmarker | undefined
   >();
-  const [runningMode] = useState<"IMAGE" | "VIDEO">("IMAGE");
   const [results, setResults] = useState(undefined);
   const [myPoses, setMyPoses] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-
-  // useEffect(() => {
-  //   const createHandLandmarker = async () => {
-  //     const vision = await FilesetResolver.forVisionTasks(
-  //       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-  //     );
-
-  //     const handLandMarkerOption: HandLandmarkerOptions = {
-  //       baseOptions: {
-  //         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-  //         delegate: "GPU",
-  //       },
-  //       runningMode: "VIDEO",
-  //       numHands: 1,
-  //     };
-
-  //     const handLandmarkerInstance = await HandLandmarker.createFromOptions(
-  //       vision,
-  //       handLandMarkerOption
-  //     );
-  //     setHandLandmarker(handLandmarkerInstance);
-  //   };
-  //   createHandLandmarker();
-  // }, [runningMode]);
 
   // const onCapturePose = () => {
   //   if (!results) {
