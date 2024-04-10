@@ -1,35 +1,130 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  FilesetResolver,
+  HandLandmarker,
+  HandLandmarkerOptions,
+} from "@mediapipe/tasks-vision";
+import React, { useState, useEffect } from "react";
+import WebcamLayout from "./layouts/WebcamLayout";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [handLandmarker, setHandLandmarker] = useState<
+    HandLandmarker | undefined
+  >();
+  const [runningMode] = useState<"IMAGE" | "VIDEO">("IMAGE");
+  const [results, setResults] = useState(undefined);
+  const [myPoses, setMyPoses] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // useEffect(() => {
+  //   const createHandLandmarker = async () => {
+  //     const vision = await FilesetResolver.forVisionTasks(
+  //       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+  //     );
+
+  //     const handLandMarkerOption: HandLandmarkerOptions = {
+  //       baseOptions: {
+  //         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+  //         delegate: "GPU",
+  //       },
+  //       runningMode: "VIDEO",
+  //       numHands: 1,
+  //     };
+
+  //     const handLandmarkerInstance = await HandLandmarker.createFromOptions(
+  //       vision,
+  //       handLandMarkerOption
+  //     );
+  //     setHandLandmarker(handLandmarkerInstance);
+  //   };
+  //   createHandLandmarker();
+  // }, [runningMode]);
+
+  // const onCapturePose = () => {
+  //   if (!results) {
+  //     setErrorMessage(
+  //       "The 'results' global variable is not set yet. Turn on your webcam to detect your hand pose and click the button again."
+  //     );
+  //     return;
+  //   }
+
+  //   const labeledPose = {
+  //     label: getLabelValue(), //
+  //     vector: convertPoseToVector(results.landmarks[0]),
+  //   };
+
+  //   setMyPoses([...myPoses, labeledPose]);
+  //   saveCount();
+  // };
+
+  // const onSavePoses = () => {
+  //   savePosesToFile();
+  // };
+
+  // const saveCount = () => {
+  //   if (myPoses.length === 0) {
+  //     console.warn("'myPoses' is empty. Please capture a pose first.");
+  //   }
+  //   console.log("saveCount");
+  //   // Update saveCount in the UI
+  // };
+
+  // const showData = () => {
+  //   console.log("showData is called");
+  //   // Update poseOutput in the UI
+  // };
+
+  // const savePosesToFile = () => {
+  //   const currentdate = new Date();
+  //   const datetime =
+  //     currentdate.getDate() +
+  //     "-" +
+  //     (currentdate.getMonth() + 1) +
+  //     "-" +
+  //     currentdate.getFullYear() +
+  //     "@" +
+  //     currentdate.getHours() +
+  //     "h" +
+  //     currentdate.getMinutes() +
+  //     "m" +
+  //     currentdate.getSeconds() +
+  //     "s";
+
+  //   const finalPoses = JSON.stringify({ data: myPoses }, null, 2);
+  //   const blob = new Blob([finalPoses], { type: "application/json" });
+  //   const url = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = `poses-${datetime}.json`;
+  //   link.click();
+  //   URL.revokeObjectURL(url);
+  // };
+
+  // const getLabelValue = () => {
+  //   const labelValue = document.getElementById("poseLabel").value;
+  //   if (!labelValue) {
+  //     setErrorMessage("Please enter a label for the pose");
+  //     return;
+  //   }
+  //   return labelValue;
+  // };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      <WebcamLayout />
+      {/* Your JSX content here */}
 
-export default App
+      {/* <button id="captureHandPose" onClick={onCapturePose}>
+        Capture Hand Pose
+      </button>
+      <button id="savePosesButton" onClick={onSavePoses}>
+        Save Poses
+      </button>
+      <button id="showPoses" onClick={showData}>
+        Show Poses
+      </button>
+      <div id="errors">{errorMessage}</div> */}
+    </div>
+  );
+};
+
+export default App;
