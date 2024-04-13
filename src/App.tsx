@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 import Webcam from "react-webcam";
 import MyButton from "./vendor/MyButton";
+import savePosesToFile from "./utils/savePosesToFile";
 
 const videoConstraints = {
   width: 480,
@@ -20,10 +21,14 @@ const App = () => {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
   const canvasRef = useRef(null);
   const drawingUtilsRef = useRef(null);
+
+  // For incoming data
   const [poseData, setPoseData] = useState([]);
+
   const [errorMesage, setErrorMessage] = useState("");
 
   const [label, setLabel] = useState("");
+  const [poseOutput, setPoseOutput] = useState("");
   const webcamRef = useRef(null);
 
   useEffect(() => {
@@ -94,7 +99,11 @@ const App = () => {
       label: label, //
       vector: convertPoseToVector(poseData[0]),
     };
+
     myPoses.push(labeledPose);
+
+    setPoseOutput(JSON.stringify(myPoses));
+
     saveCount();
 
     // setLabledPose([...labeledPose, labeledPose]);
@@ -140,10 +149,6 @@ const App = () => {
     });
   }, []);
 
-  // const onSavePoses = () => {
-  //   savePosesToFile();
-  // };
-
   const saveCount = () => {
     if (poseData.length === 0) {
       console.warn("'myPoses' is empty. Please capture a pose first.");
@@ -157,38 +162,12 @@ const App = () => {
     // Update poseOutput in the UI
   };
 
-  const savePosesToFile = () => {
-    const currentdate = new Date();
-    const datetime =
-      currentdate.getDate() +
-      "-" +
-      (currentdate.getMonth() + 1) +
-      "-" +
-      currentdate.getFullYear() +
-      "@" +
-      currentdate.getHours() +
-      "h" +
-      currentdate.getMinutes() +
-      "m" +
-      currentdate.getSeconds() +
-      "s";
-
-    const finalPoses = JSON.stringify({ data: myPoses }, null, 2);
-    const blob = new Blob([finalPoses], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `poses-${datetime}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
   function clearErrors() {
     setErrorMessage("");
   }
 
   return (
-    <div>
+    <div className="container mx-auto">
       <section className="videosection">
         {/* <Coordinates poseData={poseData} /> */}
         <Webcam
@@ -226,7 +205,7 @@ const App = () => {
             name="label"
             id="name"
             className="peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
-            placeholder="Jane Smith"
+            placeholder={"Enter label"}
             onChange={(e) => {
               setLabel(e.currentTarget.value);
               setErrorMessage("");
@@ -238,27 +217,24 @@ const App = () => {
           />
         </div>
       </div>
+
       <MyButton type="submit" onClick={onCapturePose}>
         Capture Hand Pose
       </MyButton>
+
       {myPoses.length > 0 && (
-        <div className="wrapper">
-          <pre>
-            <code>{JSON.stringify(myPoses)}</code>
-          </pre>
-        </div>
+        <div className="wrapper max-w-lg">{poseOutput}</div>
       )}
 
-      {/* <textarea>{JSON.stringify(labeledPose)}</textarea> */}
-      {/* {JSON.stringify(poseData[0])} */}
-      {/* <button id="savePosesButton" onClick={onSavePoses}>
-        Save Poses
-      </button>
-*/}
+      <MyButton
+        onClick={() => {
+          savePosesToFile(myPoses);
+        }}
+      >
+        Export poses in Json 💾
+      </MyButton>
 
-      <button id="showPoses" onClick={showData}>
-        Show Poses
-      </button>
+      {/* <MyButton onClick={showData}>Show Poses </MyButton> */}
     </div>
   );
 };

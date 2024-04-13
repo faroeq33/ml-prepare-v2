@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .videosection {
-  background-color: rgb(70, 70, 70);
+  /* background-color: rgb(70, 70, 70); */
   height: 270px;
 }
 
