@@ -52,7 +52,9 @@ const App = () => {
   }, [poseData]);
 
   const onCapturePose = () => {
+    clearErrors();
     console.log("handled form");
+
     if (!poseData) {
       setErrorMessage(
         "Turn on your webcam to detect your hand pose and click the button again."
@@ -76,18 +78,18 @@ const App = () => {
       return;
     }
     // console.log(poseData[0]);
-    if (label !== "") {
-      const labeledPose = {
-        label: label, //
-        vector: convertPoseToVector(poseData[0]),
-      };
-      myPoses.push(labeledPose);
-      saveCount();
-    } else {
+    if (label === "") {
       const errorMessage = "Label is empty!";
       setErrorMessage(errorMessage);
       console.error(errorMessage);
+      return;
     }
+    const labeledPose = {
+      label: label, //
+      vector: convertPoseToVector(poseData[0]),
+    };
+    myPoses.push(labeledPose);
+    saveCount();
 
     // setLabledPose([...labeledPose, labeledPose]);
   };
@@ -171,6 +173,10 @@ const App = () => {
     URL.revokeObjectURL(url);
   };
 
+  function clearErrors() {
+    setErrorMessage("");
+  }
+
   return (
     <div>
       <section className="videosection">
@@ -192,7 +198,9 @@ const App = () => {
       </section>
       {/* <WebcamLayout poseData={poseData} setPoseData={setPoseData} /> */}
       {/* Your JSX content here */}
-
+      <div id="errors" className="" style={{ color: "red" }}>
+        {errorMesage}
+      </div>
       <div className="div">My label : {label}</div>
       <input
         type="text"
@@ -201,12 +209,12 @@ const App = () => {
         placeholder="say label here"
         onChange={(e) => {
           setLabel(e.currentTarget.value);
+          setErrorMessage("");
         }}
       />
       <button type="submit" id="captureHandPose" onClick={onCapturePose}>
         Capture Hand Pose
       </button>
-
       {myPoses.length > 0 && (
         <div className="wrapper">
           <pre>
@@ -214,11 +222,8 @@ const App = () => {
           </pre>
         </div>
       )}
-
       {/* <textarea>{JSON.stringify(labeledPose)}</textarea> */}
-
       {/* {JSON.stringify(poseData[0])} */}
-
       {/* <button id="savePosesButton" onClick={onSavePoses}>
         Save Poses
       </button>
@@ -226,9 +231,6 @@ const App = () => {
         Show Poses
       </button>
 */}
-      <div id="errors" className="" style={{ color: "red" }}>
-        {errorMesage}
-      </div>
     </div>
   );
 };
