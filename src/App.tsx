@@ -33,8 +33,6 @@ const App = () => {
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
-    // write so it can only make 1 drawing util instance
-    // drawingUtilsRef.current = new DrawingUtils(ctx);
     if (!drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
       console.log("DrawingUtils created");
@@ -157,11 +155,6 @@ const App = () => {
     // Update saveCount in the UI
   };
 
-  const showData = () => {
-    console.log("showData is called");
-    // Update poseOutput in the UI
-  };
-
   function clearErrors() {
     setErrorMessage("");
   }
@@ -233,8 +226,6 @@ const App = () => {
       >
         Export poses in Json 💾
       </MyButton>
-
-      {/* <MyButton onClick={showData}>Show Poses </MyButton> */}
     </div>
   );
 };
