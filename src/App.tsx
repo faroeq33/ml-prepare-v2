@@ -12,17 +12,15 @@ const videoConstraints = {
   height: 270,
   facingMode: "user",
 };
+
+const myPoses = [];
+
 const App = () => {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
   const canvasRef = useRef(null);
   const drawingUtilsRef = useRef(null);
   const [poseData, setPoseData] = useState([]);
   const [errorMesage, setErrorMessage] = useState("");
-
-  const [labeledPose, setLabledPose] = useState({
-    label: "untitled",
-    vector: [1, 3, 4, 5],
-  });
 
   const [label, setLabel] = useState("");
   const webcamRef = useRef(null);
@@ -54,7 +52,7 @@ const App = () => {
   }, [poseData]);
 
   const onCapturePose = () => {
-    // console.log("handled form");
+    console.log("handled form");
     if (!poseData) {
       setErrorMessage(
         "Turn on your webcam to detect your hand pose and click the button again."
@@ -62,7 +60,7 @@ const App = () => {
       return;
     }
 
-    console.log(poseData[0]);
+    // console.log(poseData[0]);
     function convertPoseToVector(pose) {
       return pose
         .map((point) => {
@@ -71,13 +69,27 @@ const App = () => {
         .flat();
     }
 
-    const labeledPose = {
-      label: label, //
-      vector: convertPoseToVector(poseData[0]),
-    };
+    if (!poseData[0]) {
+      const errorMessage = "Turn on cam and raise a hand!";
+      setErrorMessage(errorMessage);
+      console.error(errorMessage);
+      return;
+    }
+    // console.log(poseData[0]);
+    if (label !== "") {
+      const labeledPose = {
+        label: label, //
+        vector: convertPoseToVector(poseData[0]),
+      };
+      myPoses.push(labeledPose);
+      saveCount();
+    } else {
+      const errorMessage = "Label is empty!";
+      setErrorMessage(errorMessage);
+      console.error(errorMessage);
+    }
 
-    setLabledPose(labeledPose);
-    // saveCount();
+    // setLabledPose([...labeledPose, labeledPose]);
   };
 
   const capture = async () => {
@@ -94,6 +106,7 @@ const App = () => {
     }
     requestAnimationFrame(capture);
   };
+
   useEffect(() => {
     const createHandLandmarker = async () => {
       const vision = await FilesetResolver.forVisionTasks(
@@ -119,44 +132,44 @@ const App = () => {
   //   savePosesToFile();
   // };
 
-  // const saveCount = () => {
-  //   if (myPoses.length === 0) {
-  //     console.warn("'myPoses' is empty. Please capture a pose first.");
-  //   }
-  //   console.log("saveCount");
-  //   // Update saveCount in the UI
-  // };
+  const saveCount = () => {
+    if (poseData.length === 0) {
+      console.warn("'myPoses' is empty. Please capture a pose first.");
+    }
+    console.log("saveCount");
+    // Update saveCount in the UI
+  };
 
-  // const showData = () => {
-  //   console.log("showData is called");
-  //   // Update poseOutput in the UI
-  // };
+  const showData = () => {
+    console.log("showData is called");
+    // Update poseOutput in the UI
+  };
 
-  // const savePosesToFile = () => {
-  //   const currentdate = new Date();
-  //   const datetime =
-  //     currentdate.getDate() +
-  //     "-" +
-  //     (currentdate.getMonth() + 1) +
-  //     "-" +
-  //     currentdate.getFullYear() +
-  //     "@" +
-  //     currentdate.getHours() +
-  //     "h" +
-  //     currentdate.getMinutes() +
-  //     "m" +
-  //     currentdate.getSeconds() +
-  //     "s";
+  const savePosesToFile = () => {
+    const currentdate = new Date();
+    const datetime =
+      currentdate.getDate() +
+      "-" +
+      (currentdate.getMonth() + 1) +
+      "-" +
+      currentdate.getFullYear() +
+      "@" +
+      currentdate.getHours() +
+      "h" +
+      currentdate.getMinutes() +
+      "m" +
+      currentdate.getSeconds() +
+      "s";
 
-  //   const finalPoses = JSON.stringify({ data: myPoses }, null, 2);
-  //   const blob = new Blob([finalPoses], { type: "application/json" });
-  //   const url = URL.createObjectURL(blob);
-  //   const link = document.createElement("a");
-  //   link.href = url;
-  //   link.download = `poses-${datetime}.json`;
-  //   link.click();
-  //   URL.revokeObjectURL(url);
-  // };
+    const finalPoses = JSON.stringify({ data: myPoses }, null, 2);
+    const blob = new Blob([finalPoses], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `poses-${datetime}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div>
@@ -184,6 +197,7 @@ const App = () => {
       <input
         type="text"
         name="label"
+        required
         placeholder="say label here"
         onChange={(e) => {
           setLabel(e.currentTarget.value);
@@ -193,7 +207,15 @@ const App = () => {
         Capture Hand Pose
       </button>
 
-      <textarea>{JSON.stringify(labeledPose)}</textarea>
+      {myPoses.length > 0 && (
+        <div className="wrapper">
+          <pre>
+            <code>{JSON.stringify(myPoses)}</code>
+          </pre>
+        </div>
+      )}
+
+      {/* <textarea>{JSON.stringify(labeledPose)}</textarea> */}
 
       {/* {JSON.stringify(poseData[0])} */}
 
@@ -204,7 +226,9 @@ const App = () => {
         Show Poses
       </button>
 */}
-      <div id="errors">{errorMesage}</div>
+      <div id="errors" className="" style={{ color: "red" }}>
+        {errorMesage}
+      </div>
     </div>
   );
 };
