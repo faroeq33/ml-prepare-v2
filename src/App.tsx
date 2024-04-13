@@ -6,6 +6,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import Webcam from "react-webcam";
+import MyButton from "./vendor/MyButton";
 
 const videoConstraints = {
   width: 480,
@@ -28,7 +29,12 @@ const App = () => {
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     // write so it can only make 1 drawing util instance
-    drawingUtilsRef.current = new DrawingUtils(ctx);
+    // drawingUtilsRef.current = new DrawingUtils(ctx);
+    if (!drawingUtilsRef.current) {
+      drawingUtilsRef.current = new DrawingUtils(ctx);
+      console.log("DrawingUtils created");
+      console.log(drawingUtilsRef.current);
+    }
   }, []);
   // laad het landmarker model in de landmarkerRef
 
@@ -120,14 +126,18 @@ const App = () => {
           delegate: "GPU",
         },
         runningMode: "VIDEO",
-        numHands: 2,
+        numHands: 1,
       });
-      landmarkerRef.current = handLandmarker;
-      console.log("handlandmarker is created!");
+      if (!landmarkerRef.current) {
+        console.log("something");
+        landmarkerRef.current = handLandmarker;
+        console.log("handlandmarker is created!");
+      }
       // start capturing - zie hieronder
-      capture();
     };
-    createHandLandmarker();
+    createHandLandmarker().then(() => {
+      capture();
+    });
   }, []);
 
   // const onSavePoses = () => {
@@ -201,20 +211,36 @@ const App = () => {
       <div id="errors" className="" style={{ color: "red" }}>
         {errorMesage}
       </div>
-      <div className="div">My label : {label}</div>
-      <input
-        type="text"
-        name="label"
-        required
-        placeholder="say label here"
-        onChange={(e) => {
-          setLabel(e.currentTarget.value);
-          setErrorMessage("");
-        }}
-      />
-      <button type="submit" id="captureHandPose" onClick={onCapturePose}>
+      {/* <div className="div"></div>
+      <input type="text" name="label" required placeholder="say label here" /> */}
+      <div>
+        <label
+          htmlFor="label"
+          className="block text-sm font-medium leading-6 text-gray-900"
+        >
+          My label : {label}
+        </label>
+        <div className="relative mt-2">
+          <input
+            type="text"
+            name="label"
+            id="name"
+            className="peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="Jane Smith"
+            onChange={(e) => {
+              setLabel(e.currentTarget.value);
+              setErrorMessage("");
+            }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+      <MyButton type="submit" onClick={onCapturePose}>
         Capture Hand Pose
-      </button>
+      </MyButton>
       {myPoses.length > 0 && (
         <div className="wrapper">
           <pre>
@@ -222,15 +248,17 @@ const App = () => {
           </pre>
         </div>
       )}
+
       {/* <textarea>{JSON.stringify(labeledPose)}</textarea> */}
       {/* {JSON.stringify(poseData[0])} */}
       {/* <button id="savePosesButton" onClick={onSavePoses}>
         Save Poses
       </button>
+*/}
+
       <button id="showPoses" onClick={showData}>
         Show Poses
       </button>
-*/}
     </div>
   );
 };
