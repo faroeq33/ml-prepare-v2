@@ -1,13 +1,10 @@
-import {
-  DrawingUtils,
-  FilesetResolver,
-  HandLandmarker,
-} from "@mediapipe/tasks-vision";
+import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef, useState } from "react";
 
 import Webcam from "react-webcam";
 import MyButton from "./vendor/MyButton";
 import savePosesToFile from "./utils/savePosesToFile";
+import createHandLandmarker from "./utils/createHandLandmarker";
 
 const videoConstraints = {
   width: 480,
@@ -35,8 +32,8 @@ const App = () => {
     const ctx = canvasRef.current.getContext("2d");
     if (!drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
-      console.log("DrawingUtils created");
-      console.log(drawingUtilsRef.current);
+      // console.log("DrawingUtils created");
+      // console.log(drawingUtilsRef.current);
     }
   }, []);
   // laad het landmarker model in de landmarkerRef
@@ -49,10 +46,10 @@ const App = () => {
         drawingUtilsRef.current.drawConnectors(
           hand,
           HandLandmarker.HAND_CONNECTIONS,
-          { color: "#00FF00", lineWidth: 5 }
+          { color: "#00FF00", lineWidth: 3 }
         );
         drawingUtilsRef.current.drawLandmarks(hand, {
-          radius: 4,
+          radius: 2,
           color: "#FF0000",
           lineWidth: 2,
         });
@@ -123,28 +120,21 @@ const App = () => {
   };
 
   useEffect(() => {
-    const createHandLandmarker = async () => {
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-      );
-      const handLandmarker = await HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-          delegate: "GPU",
-        },
-        runningMode: "VIDEO",
-        numHands: 1,
-      });
-      if (!landmarkerRef.current) {
-        console.log("something");
-        landmarkerRef.current = handLandmarker;
-        console.log("handlandmarker is created!");
+    const initializeHandLandmarker = async () => {
+      try {
+        const handLandMarker = await createHandLandmarker();
+        if (!landmarkerRef.current) {
+          console.log("something");
+          landmarkerRef.current = handLandMarker;
+          console.log("handlandmarker is created!");
+        }
+        capture();
+      } catch (error) {
+        console.error("Error initializing HandLandmarker:", error);
       }
-      // start capturing - zie hieronder
     };
-    createHandLandmarker().then(() => {
-      capture();
-    });
+
+    initializeHandLandmarker();
   }, []);
 
   const saveCount = () => {
@@ -216,7 +206,7 @@ const App = () => {
       </MyButton>
 
       {myPoses.length > 0 && (
-        <div className="wrapper max-w-lg">{poseOutput}</div>
+        <div className="max-w-lg wrapper">{poseOutput}</div>
       )}
 
       <MyButton
