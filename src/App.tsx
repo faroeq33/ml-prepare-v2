@@ -24,7 +24,7 @@ const App = () => {
 
   const [errorMesage, setErrorMessage] = useState("");
 
-  const [label, setLabel] = useState("");
+  const [dataLabel, setLabel] = useState("");
   const [poseOutput, setPoseOutput] = useState("");
   const webcamRef = useRef(null);
 
@@ -84,14 +84,14 @@ const App = () => {
       return;
     }
     // console.log(poseData[0]);
-    if (label === "") {
+    if (dataLabel === "") {
       const errorMessage = "Label is empty!";
       setErrorMessage(errorMessage);
       console.error(errorMessage);
       return;
     }
     const labeledPose = {
-      label: label, //
+      label: dataLabel, //
       vector: convertPoseToVector(poseData[0]),
     };
 
@@ -177,16 +177,16 @@ const App = () => {
       <input type="text" name="label" required placeholder="say label here" /> */}
       <div>
         <label
-          htmlFor="label"
+          htmlFor="dataLabel"
           className="block text-sm font-medium leading-6 text-gray-900"
         >
-          My label : {label}
+          My label : {dataLabel}
         </label>
         <div className="relative mt-2">
           <input
             type="text"
-            name="label"
-            id="name"
+            name="dataLabel"
+            id="dataLabel"
             className="peer block w-full border-0 bg-gray-50 py-1.5 text-gray-900 focus:ring-0 sm:text-sm sm:leading-6"
             placeholder={"Enter label"}
             onChange={(e) => {
