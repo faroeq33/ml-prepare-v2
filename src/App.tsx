@@ -6,18 +6,19 @@ import MyButton from "./vendor/MyButton";
 import savePosesToFile from "./utils/savePosesToFile";
 import createHandLandmarker from "./utils/createHandLandmarker";
 
-const videoConstraints = {
-  width: 480,
-  height: 270,
-  facingMode: "user",
-};
-
-const myPoses = [];
-
 const App = () => {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
-  const canvasRef = useRef(null);
-  const drawingUtilsRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const drawingUtilsRef = useRef<DrawingUtils | null>(null);
+
+  // for saving poses after capturing
+  const myPoses = useRef([]);
+
+  const videoConstraints = {
+    width: 480,
+    height: 270,
+    facingMode: "user",
+  };
 
   // For incoming data
   const [poseData, setPoseData] = useState([]);
@@ -95,7 +96,7 @@ const App = () => {
       vector: convertPoseToVector(poseData[0]),
     };
 
-    myPoses.push(labeledPose);
+    myPoses.current.push(labeledPose);
 
     setPoseOutput(JSON.stringify(myPoses));
 
@@ -205,13 +206,13 @@ const App = () => {
         Capture Hand Pose
       </MyButton>
 
-      {myPoses.length > 0 && (
+      {myPoses.current.length > 0 && (
         <div className="max-w-lg wrapper">{poseOutput}</div>
       )}
 
       <MyButton
         onClick={() => {
-          savePosesToFile(myPoses);
+          savePosesToFile(myPoses.current);
         }}
       >
         Export poses in Json 💾
