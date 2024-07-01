@@ -5,6 +5,7 @@ import Webcam from "react-webcam";
 import MyButton from "./vendor/MyButton";
 import savePosesToFile from "./utils/savePosesToFile";
 import createHandLandmarker from "./utils/createHandLandmarker";
+import ErrorTag from "./components/ErrorMessage";
 
 const App = () => {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
@@ -23,17 +24,17 @@ const App = () => {
   // For incoming data
   const [poseData, setPoseData] = useState([]);
 
-  const [errorMesage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [dataLabel, setLabel] = useState("");
-  const [poseOutput, setPoseOutput] = useState("");
+  const [poseOutput, setPoseOutput] = useState(null); // find out what type this should be
   const webcamRef = useRef(null);
 
   useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     if (!drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
-      // console.log("DrawingUtils created");
+      console.log("DrawingUtils created");
       // console.log(drawingUtilsRef.current);
     }
   }, []);
@@ -171,9 +172,8 @@ const App = () => {
       </section>
       {/* <WebcamLayout poseData={poseData} setPoseData={setPoseData} /> */}
       {/* Your JSX content here */}
-      <div id="errors" className="" style={{ color: "red" }}>
-        {errorMesage}
-      </div>
+      {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
+
       {/* <div className="div"></div>
       <input type="text" name="label" required placeholder="say label here" /> */}
       <div>
@@ -192,7 +192,6 @@ const App = () => {
             placeholder={"Enter label"}
             onChange={(e) => {
               setLabel(e.currentTarget.value);
-              setErrorMessage("");
             }}
           />
           <div
@@ -212,6 +211,13 @@ const App = () => {
 
       <MyButton
         onClick={() => {
+          if (myPoses.current.length === 0) {
+            const errorMsg = "'myPoses' is empty. Please capture a pose first.";
+            setErrorMessage(errorMsg);
+            console.warn(errorMsg);
+            return;
+          }
+
           savePosesToFile(myPoses.current);
         }}
       >
