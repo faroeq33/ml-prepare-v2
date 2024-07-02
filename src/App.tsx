@@ -2,7 +2,7 @@ import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef, useState } from "react";
 
 import Webcam from "react-webcam";
-import MyButton from "./vendor/MyButton";
+import ThemeButton from "./vendor/ThemeButton";
 import savePosesToFile from "./utils/savePosesToFile";
 import createHandLandmarker from "./utils/createHandLandmarker";
 import ErrorTag from "./components/ErrorMessage";
@@ -99,7 +99,7 @@ const App = () => {
 
     myPoses.current.push(labeledPose);
 
-    setPoseOutput(JSON.stringify(myPoses));
+    setPoseOutput(JSON.stringify(myPoses.current, null, 2));
 
     saveCount();
 
@@ -152,7 +152,7 @@ const App = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto ">
       <section className="videosection">
         {/* <Coordinates poseData={poseData} /> */}
         <Webcam
@@ -183,7 +183,7 @@ const App = () => {
         >
           My label : {dataLabel}
         </label>
-        <div className="relative mt-2">
+        <div className="mt-2 ">
           <input
             type="text"
             name="dataLabel"
@@ -195,21 +195,26 @@ const App = () => {
             }}
           />
           <div
-            className="absolute inset-x-0 bottom-0 border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600"
+            className="border-t border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600"
             aria-hidden="true"
           />
         </div>
       </div>
 
-      <MyButton type="submit" onClick={onCapturePose}>
+      <ThemeButton type="submit" onClick={onCapturePose}>
         Capture Hand Pose
-      </MyButton>
+      </ThemeButton>
 
       {myPoses.current.length > 0 && (
-        <div className="max-w-lg wrapper">{poseOutput}</div>
+        <textarea
+          className="w-full overflow-x-scroll"
+          rows={10}
+          value={poseOutput}
+          readOnly
+        />
       )}
 
-      <MyButton
+      <ThemeButton
         onClick={() => {
           if (myPoses.current.length === 0) {
             const errorMsg = "'myPoses' is empty. Please capture a pose first.";
@@ -222,7 +227,7 @@ const App = () => {
         }}
       >
         Export poses in Json 💾
-      </MyButton>
+      </ThemeButton>
     </div>
   );
 };
