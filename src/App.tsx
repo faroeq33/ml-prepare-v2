@@ -40,7 +40,10 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [dataLabel, setLabel] = useState("");
+
   const webcamRef = useRef<Webcam | null>(null);
+
+  const requestIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     // initialize DrawingUtils
@@ -54,25 +57,49 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const initializeHandLandmarker = async () => {
-      try {
-        const handLandMarker = await createHandLandmarker();
-        if (!landmarkerRef.current) {
-          console.log("something");
-          landmarkerRef.current = handLandMarker;
-          console.log("handlandmarker is created!");
+    const capture = async () => {
+      if (landmarkerRef.current && webcamRef.current.getCanvas()) {
+        if (webcamRef.current.video.currentTime > 0) {
+          const result = await landmarkerRef.current.detectForVideo(
+            webcamRef.current.video,
+            performance.now()
+          );
+          if (result.landmarks) {
+            setPoseData(result.landmarks);
+          }
         }
-        capture();
-      } catch (error) {
-        console.error("Error initializing HandLandmarker:", error);
       }
+      requestIdRef.current = requestAnimationFrame(capture);
     };
 
-    initializeHandLandmarker();
+    const initializeHandLandmarker = async () => {
+      const handLandMarker = await createHandLandmarker({
+        baseOptions: {
+          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+          delegate: "GPU",
+        },
+        runningMode: "VIDEO",
+        numHands: 1,
+      });
+      if (!landmarkerRef.current) {
+        console.log("something");
+        landmarkerRef.current = handLandMarker;
+        console.log("handlandmarker is created!");
+      }
+      // capture();
+    };
+
+    initializeHandLandmarker().then(capture).catch(console.error);
+
+    // how do I know if my animationframe is running?
+    return () => cancelAnimationFrame(requestIdRef.current);
   }, []);
 
   useEffect(() => {
     const canvasContext = canvasRef.current.getContext("2d");
+    // if (poseData.length === 0) {
+    //   return;
+    // }
     if (drawingUtilsRef.current) {
       // erase the previous frame
       canvasContext.clearRect(0, 0, 480, 270);
@@ -137,21 +164,6 @@ const App = () => {
     setPoseOutput(JSON.stringify(myPoses.current, null, 2));
 
     saveCount();
-  };
-
-  const capture = async () => {
-    if (landmarkerRef.current && webcamRef.current.getCanvas()) {
-      if (webcamRef.current.video.currentTime > 0) {
-        const result = await landmarkerRef.current.detectForVideo(
-          webcamRef.current.video,
-          performance.now()
-        );
-        if (result.landmarks) {
-          setPoseData(result.landmarks);
-        }
-      }
-    }
-    requestAnimationFrame(capture);
   };
 
   const saveCount = () => {
