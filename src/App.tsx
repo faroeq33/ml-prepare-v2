@@ -8,14 +8,15 @@ import WebcamSection from "./components/layouts/WebCamSection";
 import { useRef, useState } from "react";
 
 const App = () => {
+  // For incoming data
+  const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
+  const [drawing, setDrawing] = useState(true);
+
   // for saving poses as json after capturing
   const myPoses = useRef<LabeledPose[]>([]);
 
   // for displaying poses in the textarea
   const [poseOutput, setPoseOutput] = useState<string | null>(null);
-
-  // For incoming data
-  const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -78,14 +79,25 @@ const App = () => {
     setErrorMessage("");
   }
 
+  function toggleDraw() {
+    setDrawing((prevState) => !prevState);
+  }
+
   return (
     <div className="container mx-auto ">
-      <WebcamSection poseData={poseData} setPoseData={setPoseData} />
+      <WebcamSection
+        poseData={poseData}
+        setPoseData={setPoseData}
+        drawing={drawing}
+      />
       {/* Your JSX content here */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
       {/* <div className="div"></div>
       <input type="text" name="label" required placeholder="say label here" /> */}
+      <div className="flex">
+        <ThemeButton onClick={toggleDraw}>Draw Hands</ThemeButton>
+      </div>
       <div>
         <label
           htmlFor="dataLabel"

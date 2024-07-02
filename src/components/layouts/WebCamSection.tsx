@@ -10,9 +10,10 @@ import createHandLandmarker from "../../utils/createHandLandmarker";
 type WebcamSectionProps = {
   setPoseData: React.Dispatch<React.SetStateAction<NormalizedLandmark[][]>>;
   poseData: NormalizedLandmark[][];
+  drawing: boolean;
 };
 
-function WebcamSection({ poseData, setPoseData }: WebcamSectionProps) {
+function WebcamSection({ poseData, setPoseData, drawing }: WebcamSectionProps) {
   // canvasref for drawing the landmarks on the canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const webcamRef = useRef<Webcam | null>(null);
@@ -32,24 +33,35 @@ function WebcamSection({ poseData, setPoseData }: WebcamSectionProps) {
   // for canceling the animation frame
   const requestIdRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    // initialize DrawingUtils
-
+  const initializeDrawingUtils = () => {
     const ctx = canvasRef.current.getContext("2d");
     if (!drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
       console.log("DrawingUtils created");
-      // console.log(drawingUtilsRef.current);
     }
-  }, []);
+  };
+
+  const clearDrawingUtils = () => {
+    if (drawingUtilsRef.current) {
+      drawingUtilsRef.current.close();
+      drawingUtilsRef.current = null;
+      const canvasContext = canvasRef.current.getContext("2d");
+      canvasContext.clearRect(0, 0, 480, 270);
+    }
+  };
+
+  useEffect(() => {
+    initializeDrawingUtils();
+    return () => clearDrawingUtils();
+  }, [drawing]);
 
   const draw = useCallback(() => {
-    const canvasContext = canvasRef.current.getContext("2d");
     // if (poseData.length === 0) {
     //   return;
     // }
     if (drawingUtilsRef.current) {
       // erase the previous frame
+      const canvasContext = canvasRef.current.getContext("2d");
       canvasContext.clearRect(0, 0, 480, 270);
 
       // Draw connectors between hand landmarks
@@ -70,8 +82,12 @@ function WebcamSection({ poseData, setPoseData }: WebcamSectionProps) {
   }, [poseData]);
 
   useEffect(() => {
-    draw();
-  }, [poseData, draw]);
+    if (drawing) {
+      draw();
+    } else {
+      clearDrawingUtils();
+    }
+  }, [poseData, draw, drawing]);
 
   useEffect(() => {
     const capture = async () => {
@@ -110,7 +126,7 @@ function WebcamSection({ poseData, setPoseData }: WebcamSectionProps) {
 
     // how do I know if my animationframe is running?
     return () => cancelAnimationFrame(requestIdRef.current);
-  }, []);
+  }, [setPoseData]);
 
   return (
     <>
