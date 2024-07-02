@@ -1,38 +1,18 @@
-import {
-  DrawingUtils,
-  HandLandmarker,
-  NormalizedLandmark,
-} from "@mediapipe/tasks-vision";
-import { useEffect, useRef, useState } from "react";
+import { NormalizedLandmark } from "@mediapipe/tasks-vision";
 
-import Webcam from "react-webcam";
-import ThemeButton from "./vendor/ThemeButton";
+import ThemeButton from "./components/vendor/ThemeButton";
 import savePosesToFile from "./utils/savePosesToFile";
-import createHandLandmarker from "./utils/createHandLandmarker";
 import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
+import WebcamSection from "./components/layouts/WebCamSection";
+import { useRef, useState } from "react";
 
 const App = () => {
-  // Ref for landmarker in order to capture poses
-  const landmarkerRef = useRef<HandLandmarker | null>(null);
-
-  // drawingutils for drawing the landmarks on the canvas
-  const drawingUtilsRef = useRef<DrawingUtils | null>(null);
-
-  // canvasref for drawing the landmarks on the canvas
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
   // for saving poses as json after capturing
   const myPoses = useRef<LabeledPose[]>([]);
 
   // for displaying poses in the textarea
   const [poseOutput, setPoseOutput] = useState<string | null>(null);
-
-  const videoConstraints = {
-    width: 480,
-    height: 270,
-    facingMode: "user",
-  };
 
   // For incoming data
   const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
@@ -40,86 +20,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [dataLabel, setLabel] = useState("");
-
-  const webcamRef = useRef<Webcam | null>(null);
-
-  const requestIdRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    // initialize DrawingUtils
-
-    const ctx = canvasRef.current.getContext("2d");
-    if (!drawingUtilsRef.current) {
-      drawingUtilsRef.current = new DrawingUtils(ctx);
-      console.log("DrawingUtils created");
-      // console.log(drawingUtilsRef.current);
-    }
-  }, []);
-
-  useEffect(() => {
-    const capture = async () => {
-      if (landmarkerRef.current && webcamRef.current.getCanvas()) {
-        if (webcamRef.current.video.currentTime > 0) {
-          const result = await landmarkerRef.current.detectForVideo(
-            webcamRef.current.video,
-            performance.now()
-          );
-          if (result.landmarks) {
-            setPoseData(result.landmarks);
-          }
-        }
-      }
-      requestIdRef.current = requestAnimationFrame(capture);
-    };
-
-    const initializeHandLandmarker = async () => {
-      const handLandMarker = await createHandLandmarker({
-        baseOptions: {
-          modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-          delegate: "GPU",
-        },
-        runningMode: "VIDEO",
-        numHands: 1,
-      });
-      if (!landmarkerRef.current) {
-        console.log("something");
-        landmarkerRef.current = handLandMarker;
-        console.log("handlandmarker is created!");
-      }
-      // capture();
-    };
-
-    initializeHandLandmarker().then(capture).catch(console.error);
-
-    // how do I know if my animationframe is running?
-    return () => cancelAnimationFrame(requestIdRef.current);
-  }, []);
-
-  useEffect(() => {
-    const canvasContext = canvasRef.current.getContext("2d");
-    // if (poseData.length === 0) {
-    //   return;
-    // }
-    if (drawingUtilsRef.current) {
-      // erase the previous frame
-      canvasContext.clearRect(0, 0, 480, 270);
-
-      // Draw connectors between hand landmarks
-      for (const hand of poseData) {
-        drawingUtilsRef.current.drawConnectors(
-          hand,
-          HandLandmarker.HAND_CONNECTIONS,
-          { color: "#00FF00", lineWidth: 3 }
-        );
-        // Draw landmarks of the hand
-        drawingUtilsRef.current.drawLandmarks(hand, {
-          radius: 2,
-          color: "#FF0000",
-          lineWidth: 2,
-        });
-      }
-    }
-  }, [poseData]);
 
   const onCapturePose = () => {
     clearErrors();
@@ -180,24 +80,7 @@ const App = () => {
 
   return (
     <div className="container mx-auto ">
-      <section className="videosection">
-        {/* <Coordinates poseData={poseData} /> */}
-        <Webcam
-          width={videoConstraints.width}
-          height={videoConstraints.height}
-          mirrored={true}
-          id="webcam"
-          audio={false}
-          videoConstraints={videoConstraints}
-          ref={webcamRef}
-        />
-        <canvas
-          ref={canvasRef}
-          width={videoConstraints.width}
-          height={videoConstraints.height}
-        ></canvas>
-      </section>
-      {/* <WebcamLayout poseData={poseData} setPoseData={setPoseData} /> */}
+      <WebcamSection poseData={poseData} setPoseData={setPoseData} />
       {/* Your JSX content here */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
