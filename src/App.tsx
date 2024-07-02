@@ -6,6 +6,7 @@ import ThemeButton from "./vendor/ThemeButton";
 import savePosesToFile from "./utils/savePosesToFile";
 import createHandLandmarker from "./utils/createHandLandmarker";
 import ErrorTag from "./components/ErrorMessage";
+import { LabeledPose } from "./types/types";
 
 const App = () => {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
@@ -13,7 +14,7 @@ const App = () => {
   const drawingUtilsRef = useRef<DrawingUtils | null>(null);
 
   // for saving poses after capturing
-  const myPoses = useRef([]);
+  const myPoses = useRef<LabeledPose[]>([]);
 
   const videoConstraints = {
     width: 480,
@@ -28,9 +29,11 @@ const App = () => {
 
   const [dataLabel, setLabel] = useState("");
   const [poseOutput, setPoseOutput] = useState(null); // find out what type this should be
-  const webcamRef = useRef(null);
+  const webcamRef = useRef<Webcam>(null);
 
   useEffect(() => {
+    // initialize DrawingUtils
+
     const ctx = canvasRef.current.getContext("2d");
     if (!drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
@@ -38,7 +41,6 @@ const App = () => {
       // console.log(drawingUtilsRef.current);
     }
   }, []);
-  // laad het landmarker model in de landmarkerRef
 
   useEffect(() => {
     const initializeHandLandmarker = async () => {
@@ -61,13 +63,17 @@ const App = () => {
   useEffect(() => {
     const canvasContext = canvasRef.current.getContext("2d");
     if (drawingUtilsRef.current) {
+      // erase the previous frame
       canvasContext.clearRect(0, 0, 480, 270);
+
+      // Draw connectors between hand landmarks
       for (const hand of poseData) {
         drawingUtilsRef.current.drawConnectors(
           hand,
           HandLandmarker.HAND_CONNECTIONS,
           { color: "#00FF00", lineWidth: 3 }
         );
+        // Draw landmarks of the hand
         drawingUtilsRef.current.drawLandmarks(hand, {
           radius: 2,
           color: "#FF0000",
@@ -88,7 +94,7 @@ const App = () => {
       return;
     }
 
-    // console.log(poseData[0]);
+    console.log(poseData[0]);
     function convertPoseToVector(pose) {
       return pose
         .map((point) => {
@@ -125,7 +131,7 @@ const App = () => {
   };
 
   const capture = async () => {
-    if (landmarkerRef.current && webcamRef.current.getCanvas("2d")) {
+    if (landmarkerRef.current && webcamRef.current.getCanvas()) {
       if (webcamRef.current.video.currentTime > 0) {
         const result = await landmarkerRef.current.detectForVideo(
           webcamRef.current.video,
