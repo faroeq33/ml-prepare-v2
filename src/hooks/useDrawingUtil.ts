@@ -53,7 +53,7 @@ function useDrawingUtil({ poseData, canvasRef }) {
         });
       }
     }
-  }, [poseData, canvasRef, drawing, drawingUtilsRef]);
+  }, [poseData, canvasRef, drawingUtilsRef]);
 
   function toggleDraw() {
     setDrawing((prevState) => !prevState);
@@ -65,7 +65,7 @@ function useDrawingUtil({ poseData, canvasRef }) {
     } else {
       clearDrawingUtils();
     }
-  }, [poseData, draw, drawing]);
+  }, [poseData, draw, drawing, clearDrawingUtils]);
 
   return { drawing, toggleDraw };
 }
