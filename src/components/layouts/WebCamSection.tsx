@@ -1,25 +1,18 @@
-import {
-  DrawingUtils,
-  HandLandmarker,
-  NormalizedLandmark,
-} from "@mediapipe/tasks-vision";
-import { useCallback, useEffect, useRef } from "react";
+import { HandLandmarker, NormalizedLandmark } from "@mediapipe/tasks-vision";
+import { useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 import createHandLandmarker from "../../utils/createHandLandmarker";
 
 type WebcamSectionProps = {
   setPoseData: React.Dispatch<React.SetStateAction<NormalizedLandmark[][]>>;
   poseData: NormalizedLandmark[][];
-  drawing: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  // drawing: boolean;
 };
 
-function WebcamSection({ poseData, setPoseData, drawing }: WebcamSectionProps) {
+function WebcamSection({ setPoseData, canvasRef }: WebcamSectionProps) {
   // canvasref for drawing the landmarks on the canvas
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const webcamRef = useRef<Webcam | null>(null);
-
-  // drawingutils for drawing the landmarks on the canvas
-  const drawingUtilsRef = useRef<DrawingUtils | null>(null);
 
   // Ref for landmarker in order to capture poses
   const landmarkerRef = useRef<HandLandmarker | null>(null);
@@ -33,65 +26,9 @@ function WebcamSection({ poseData, setPoseData, drawing }: WebcamSectionProps) {
   // for canceling the animation frame
   const requestIdRef = useRef<number | null>(null);
 
-  const initializeDrawingUtils = () => {
-    const ctx = canvasRef.current.getContext("2d");
-    if (!drawingUtilsRef.current) {
-      drawingUtilsRef.current = new DrawingUtils(ctx);
-      console.log("DrawingUtils created");
-    }
-  };
-
-  const clearDrawingUtils = () => {
-    if (drawingUtilsRef.current) {
-      drawingUtilsRef.current.close();
-      drawingUtilsRef.current = null;
-      const canvasContext = canvasRef.current.getContext("2d");
-      canvasContext.clearRect(0, 0, 480, 270);
-    }
-  };
-
-  useEffect(() => {
-    initializeDrawingUtils();
-    return () => clearDrawingUtils();
-  }, [drawing]);
-
-  const draw = useCallback(() => {
-    // if (poseData.length === 0) {
-    //   return;
-    // }
-    if (drawingUtilsRef.current) {
-      // erase the previous frame
-      const canvasContext = canvasRef.current.getContext("2d");
-      canvasContext.clearRect(0, 0, 480, 270);
-
-      // Draw connectors between hand landmarks
-      for (const hand of poseData) {
-        drawingUtilsRef.current.drawConnectors(
-          hand,
-          HandLandmarker.HAND_CONNECTIONS,
-          { color: "#00FF00", lineWidth: 3 }
-        );
-        // Draw landmarks of the hand
-        drawingUtilsRef.current.drawLandmarks(hand, {
-          radius: 2,
-          color: "#FF0000",
-          lineWidth: 2,
-        });
-      }
-    }
-  }, [poseData]);
-
-  useEffect(() => {
-    if (drawing) {
-      draw();
-    } else {
-      clearDrawingUtils();
-    }
-  }, [poseData, draw, drawing]);
-
   useEffect(() => {
     const capture = async () => {
-      if (landmarkerRef.current && webcamRef.current.getCanvas()) {
+      if (landmarkerRef.current && webcamRef.current.getCanvas("2d")) {
         if (webcamRef.current.video.currentTime > 0) {
           const result = await landmarkerRef.current.detectForVideo(
             webcamRef.current.video,

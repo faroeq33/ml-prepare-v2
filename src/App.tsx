@@ -6,11 +6,14 @@ import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
 import WebcamSection from "./components/layouts/WebCamSection";
 import { useRef, useState } from "react";
+import useDrawingUtil from "./hooks/useDrawingUtil";
 
 const App = () => {
   // For incoming data
   const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
-  const [drawing, setDrawing] = useState(true);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const { drawing, toggleDraw } = useDrawingUtil({ poseData, canvasRef });
 
   // for saving poses as json after capturing
   const myPoses = useRef<LabeledPose[]>([]);
@@ -33,14 +36,6 @@ const App = () => {
       return;
     }
 
-    function convertPoseToVector(pose) {
-      return pose
-        .map((point) => {
-          return [point.x, point.y]; //commented z because depth is not needed
-        })
-        .flat();
-    }
-
     if (!poseData[0]) {
       const errorMessage = "Turn on cam and raise a hand!";
       setErrorMessage(errorMessage);
@@ -54,8 +49,17 @@ const App = () => {
       console.error(errorMessage);
       return;
     }
+
+    function convertPoseToVector(pose) {
+      return pose
+        .map((point) => {
+          return [point.x, point.y]; //commented z because depth is not needed
+        })
+        .flat();
+    }
+
     const labeledPose = {
-      label: dataLabel, //
+      label: dataLabel,
       vector: convertPoseToVector(poseData[0]),
     };
 
@@ -79,16 +83,13 @@ const App = () => {
     setErrorMessage("");
   }
 
-  function toggleDraw() {
-    setDrawing((prevState) => !prevState);
-  }
-
   return (
     <div className="container mx-auto ">
       <WebcamSection
         poseData={poseData}
         setPoseData={setPoseData}
-        drawing={drawing}
+        canvasRef={canvasRef}
+        // drawing={drawing}
       />
       {/* Your JSX content here */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
