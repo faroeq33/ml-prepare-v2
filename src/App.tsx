@@ -41,6 +41,24 @@ const App = () => {
   // laad het landmarker model in de landmarkerRef
 
   useEffect(() => {
+    const initializeHandLandmarker = async () => {
+      try {
+        const handLandMarker = await createHandLandmarker();
+        if (!landmarkerRef.current) {
+          console.log("something");
+          landmarkerRef.current = handLandMarker;
+          console.log("handlandmarker is created!");
+        }
+        capture();
+      } catch (error) {
+        console.error("Error initializing HandLandmarker:", error);
+      }
+    };
+
+    initializeHandLandmarker();
+  }, []);
+
+  useEffect(() => {
     const canvasContext = canvasRef.current.getContext("2d");
     if (drawingUtilsRef.current) {
       canvasContext.clearRect(0, 0, 480, 270);
@@ -120,24 +138,6 @@ const App = () => {
     }
     requestAnimationFrame(capture);
   };
-
-  useEffect(() => {
-    const initializeHandLandmarker = async () => {
-      try {
-        const handLandMarker = await createHandLandmarker();
-        if (!landmarkerRef.current) {
-          console.log("something");
-          landmarkerRef.current = handLandMarker;
-          console.log("handlandmarker is created!");
-        }
-        capture();
-      } catch (error) {
-        console.error("Error initializing HandLandmarker:", error);
-      }
-    };
-
-    initializeHandLandmarker();
-  }, []);
 
   const saveCount = () => {
     if (poseData.length === 0) {
