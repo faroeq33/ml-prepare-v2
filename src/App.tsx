@@ -1,4 +1,8 @@
-import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
+import {
+  DrawingUtils,
+  HandLandmarker,
+  NormalizedLandmark,
+} from "@mediapipe/tasks-vision";
 import { useEffect, useRef, useState } from "react";
 
 import Webcam from "react-webcam";
@@ -9,12 +13,20 @@ import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
 
 const App = () => {
+  // Ref for landmarker in order to capture poses
   const landmarkerRef = useRef<HandLandmarker | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // drawingutils for drawing the landmarks on the canvas
   const drawingUtilsRef = useRef<DrawingUtils | null>(null);
 
-  // for saving poses after capturing
+  // canvasref for drawing the landmarks on the canvas
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // for saving poses as json after capturing
   const myPoses = useRef<LabeledPose[]>([]);
+
+  // for displaying poses in the textarea
+  const [poseOutput, setPoseOutput] = useState<string | null>(null);
 
   const videoConstraints = {
     width: 480,
@@ -23,13 +35,12 @@ const App = () => {
   };
 
   // For incoming data
-  const [poseData, setPoseData] = useState([]);
+  const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
 
   const [errorMessage, setErrorMessage] = useState("");
 
   const [dataLabel, setLabel] = useState("");
-  const [poseOutput, setPoseOutput] = useState(null); // find out what type this should be
-  const webcamRef = useRef<Webcam>(null);
+  const webcamRef = useRef<Webcam | null>(null);
 
   useEffect(() => {
     // initialize DrawingUtils
@@ -94,11 +105,10 @@ const App = () => {
       return;
     }
 
-    console.log(poseData[0]);
     function convertPoseToVector(pose) {
       return pose
         .map((point) => {
-          return [point.x, point.y, point.z];
+          return [point.x, point.y]; //commented z because depth is not needed
         })
         .flat();
     }
@@ -121,13 +131,12 @@ const App = () => {
       vector: convertPoseToVector(poseData[0]),
     };
 
+    // for saving poses after capturing
     myPoses.current.push(labeledPose);
 
     setPoseOutput(JSON.stringify(myPoses.current, null, 2));
 
     saveCount();
-
-    // setLabledPose([...labeledPose, labeledPose]);
   };
 
   const capture = async () => {
