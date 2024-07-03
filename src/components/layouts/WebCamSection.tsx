@@ -8,7 +8,7 @@ import useDrawingUtil from "../../hooks/useDrawingUtil";
 function WebcamSection() {
   const { webcamRef, canvasRef } = usePose();
   useCaptureLandmarks();
-  const { toggleDraw } = useDrawingUtil();
+  const { toggleDraw, drawing } = useDrawingUtil();
 
   const videoConstraints = {
     width: 480,
@@ -37,7 +37,9 @@ function WebcamSection() {
           ></canvas>
         </section>
         <div className="flex">
-          <ThemeButton onClick={toggleDraw}>Draw Hands</ThemeButton>
+          <ThemeButton onClick={toggleDraw}>
+            Draw Hands {drawing ? "🔴: on" : "⚫: off"}
+          </ThemeButton>
         </div>
       </div>
     </>
