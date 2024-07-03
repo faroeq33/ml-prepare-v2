@@ -9,6 +9,7 @@ import { usePose } from "./context/PoseContext";
 const App = () => {
   // for saving poses as json after capturing
   const { poseData } = usePose();
+
   const myPoses = useRef<LabeledPose[]>([]);
 
   // for displaying poses in the textarea
@@ -60,16 +61,6 @@ const App = () => {
     myPoses.current.push(labeledPose);
 
     setPoseOutput(JSON.stringify(myPoses.current, null, 2));
-
-    saveCount();
-  };
-
-  const saveCount = () => {
-    if (poseData.length === 0) {
-      console.warn("'myPoses' is empty. Please capture a pose first.");
-    }
-    console.log("saveCount");
-    // Update saveCount in the UI
   };
 
   function clearErrors() {
@@ -79,11 +70,7 @@ const App = () => {
   return (
     <div className="container mx-auto ">
       <WebcamSection />
-      {/* Your JSX content here */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
-
-      {/* <div className="div"></div>
-      <input type="text" name="label" required placeholder="say label here" /> */}
 
       <div>
         <label
@@ -122,6 +109,8 @@ const App = () => {
           readOnly
         />
       )}
+
+      <div>Saved poses: {myPoses.current.length || 0}</div>
 
       <ThemeButton
         onClick={() => {
