@@ -1,21 +1,14 @@
-import { NormalizedLandmark } from "@mediapipe/tasks-vision";
-
 import ThemeButton from "./components/vendor/ThemeButton";
 import savePosesToFile from "./utils/savePosesToFile";
 import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
 import WebcamSection from "./components/layouts/WebCamSection";
 import { useRef, useState } from "react";
-import useDrawingUtil from "./hooks/useDrawingUtil";
+import { usePose } from "./context/PoseContext";
 
 const App = () => {
-  // For incoming data
-  const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  const { drawing, toggleDraw } = useDrawingUtil({ poseData, canvasRef });
-
   // for saving poses as json after capturing
+  const { poseData } = usePose();
   const myPoses = useRef<LabeledPose[]>([]);
 
   // for displaying poses in the textarea
@@ -85,20 +78,13 @@ const App = () => {
 
   return (
     <div className="container mx-auto ">
-      <WebcamSection
-        poseData={poseData}
-        setPoseData={setPoseData}
-        canvasRef={canvasRef}
-        // drawing={drawing}
-      />
+      <WebcamSection />
       {/* Your JSX content here */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
       {/* <div className="div"></div>
       <input type="text" name="label" required placeholder="say label here" /> */}
-      <div className="flex">
-        <ThemeButton onClick={toggleDraw}>Draw Hands</ThemeButton>
-      </div>
+
       <div>
         <label
           htmlFor="dataLabel"

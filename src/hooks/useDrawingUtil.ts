@@ -1,7 +1,9 @@
 import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePose } from "../context/PoseContext";
 
-function useDrawingUtil({ poseData, canvasRef }) {
+function useDrawingUtil() {
+  const { poseData, canvasRef } = usePose();
   const [drawing, setDrawing] = useState(true);
   // drawingutils for drawing the landmarks on the canvas
 
