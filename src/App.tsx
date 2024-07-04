@@ -4,7 +4,8 @@ import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
 import WebcamSection from "./components/layouts/WebCamSection";
 import { useRef, useState } from "react";
-import { usePose } from "./context/PoseContext";
+import { usePose } from "./context/usePose";
+import { NormalizedLandmark } from "@mediapipe/tasks-vision";
 
 const App = () => {
   // for saving poses as json after capturing
@@ -44,7 +45,7 @@ const App = () => {
       return;
     }
 
-    function convertPoseToVector(pose) {
+    function convertPoseToVector(pose: NormalizedLandmark[]) {
       return pose
         .map((point) => {
           return [point.x, point.y]; //commented z because depth is not needed
