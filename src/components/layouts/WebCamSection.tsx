@@ -1,7 +1,7 @@
 import Webcam from "react-webcam";
 // import createHandLandmarker from "../../utils/createHandLandmarker";
 import useCaptureLandmarks from "../../hooks/useCaptureLandmarks";
-import { usePose } from "../../context/PoseContext";
+import { usePose } from "../../context/usePose";
 import ThemeButton from "../vendor/ThemeButton";
 import useDrawingUtil from "../../hooks/useDrawingUtil";
 

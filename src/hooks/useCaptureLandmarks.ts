@@ -1,7 +1,7 @@
 import { HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef } from "react";
 import createHandLandmarker from "../utils/createHandLandmarker";
-import { usePose } from "../context/PoseContext";
+import { usePose } from "../context/usePose";
 
 function useCaptureLandmarks() {
   const { webcamRef, setPoseData } = usePose();

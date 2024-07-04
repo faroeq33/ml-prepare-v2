@@ -1,6 +1,6 @@
 import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePose } from "../context/PoseContext";
+import { usePose } from "../context/usePose";
 
 function useDrawingUtil() {
   const { poseData, canvasRef } = usePose();
