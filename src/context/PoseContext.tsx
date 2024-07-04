@@ -20,8 +20,9 @@ const PoseContainer = () => {
 
 // Because I don't want to specify the type of the context, I use the ReturnType utility type to infer the type of the PoseContainer function
 type PoseContextType = ReturnType<typeof PoseContainer>;
+
 export const PoseContext = createContext<PoseContextType | undefined>(
-  PoseContainer()
+  undefined
 );
 
 export const PoseProvider = ({ children }: { children?: ReactNode }) => {
