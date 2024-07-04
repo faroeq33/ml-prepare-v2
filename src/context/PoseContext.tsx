@@ -1,52 +1,33 @@
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
-import {
-  Dispatch,
-  ElementRef,
-  FC,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { ReactNode, createContext, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-interface PoseContextType {
-  poseData: NormalizedLandmark[][];
-  setPoseData: Dispatch<SetStateAction<NormalizedLandmark[][]>>;
-  webcamRef: React.MutableRefObject<Webcam | null>;
-  canvasRef: React.MutableRefObject<ElementRef<"canvas">> | null;
-}
-
-const PoseContext = createContext<PoseContextType | undefined>(undefined);
-
-export const PoseProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  // For incoming data
+// A container where state, refs and functions are defined, has the advantage of type inference
+const PoseContainer = () => {
   const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
   const webcamRef = useRef<Webcam | null>(null);
 
   // canvasref for drawing the landmarks on the canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  return {
+    poseData,
+    setPoseData,
+    webcamRef,
+    canvasRef,
+  };
+};
+
+// Because I don't want to specify the type of the context, I use the ReturnType utility type to infer the type of the PoseContainer function
+type PoseContextType = ReturnType<typeof PoseContainer>;
+export const PoseContext = createContext<PoseContextType | undefined>(
+  PoseContainer()
+);
+
+export const PoseProvider = ({ children }: { children?: ReactNode }) => {
   return (
-    <PoseContext.Provider
-      value={{
-        poseData,
-        setPoseData,
-        webcamRef,
-        canvasRef,
-      }}
-    >
+    <PoseContext.Provider value={PoseContainer()}>
       {children}
     </PoseContext.Provider>
   );
-};
-
-export const usePose = () => {
-  const context = useContext(PoseContext);
-  if (context === undefined) {
-    throw new Error(`userPose must be used within an PoseProvider`);
-  }
-  return context;
 };
