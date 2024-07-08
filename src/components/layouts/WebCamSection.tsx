@@ -14,16 +14,8 @@ const videoConstraints = {
 function WebcamSection() {
   const { webcamRef, canvasRef } = usePose();
 
-  // const videoElement = useRef(null);
   useCaptureLandmarks();
   const { toggleDraw, drawing } = useDrawingUtil();
-
-  // useEffect(() => {
-  //   // If the camera is turned off in the meantime, turn off drawing as well
-  //   if (showVideo === false && drawing === true) {
-  //     toggleDraw();
-  //   }
-  // }, [showVideo, toggleDraw, drawing]);
 
   return (
     <>
