@@ -7,7 +7,7 @@ const PoseContainer = () => {
   const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
   const webcamRef = useRef<Webcam | null>(null);
 
-  // canvasref for drawing the landmarks on the canvas
+  // canvasref for drawing landmarks on canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   return {

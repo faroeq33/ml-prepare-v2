@@ -14,7 +14,7 @@ function useCaptureLandmarks() {
 
   useEffect(() => {
     const capture = async () => {
-      if (landmarkerRef.current && webcamRef.current.getCanvas()) {
+      if (landmarkerRef.current) {
         if (webcamRef.current.video.currentTime > 0) {
           const result = await landmarkerRef.current.detectForVideo(
             webcamRef.current.video,

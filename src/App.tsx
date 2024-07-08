@@ -15,9 +15,7 @@ const App = () => {
 
   // for displaying poses in the textarea
   const [poseOutput, setPoseOutput] = useState<string | null>(null);
-
   const [errorMessage, setErrorMessage] = useState("");
-
   const [dataLabel, setLabel] = useState("");
 
   const onCapturePose = () => {
@@ -69,7 +67,7 @@ const App = () => {
   }
 
   return (
-    <div className="container mx-auto ">
+    <div className="container mx-auto">
       <WebcamSection />
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
