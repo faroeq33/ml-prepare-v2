@@ -1,9 +1,8 @@
+import { usePose } from "@/context/usePose";
+import useCaptureLandmarks from "@/hooks/useCaptureLandmarks";
+import useDrawingUtil from "@/hooks/useDrawingUtil";
 import Webcam from "react-webcam";
-// import createHandLandmarker from "../../utils/createHandLandmarker";
-import useCaptureLandmarks from "../../hooks/useCaptureLandmarks";
-import { usePose } from "../../context/usePose";
-import ThemeButton from "../vendor/ThemeButton";
-import useDrawingUtil from "../../hooks/useDrawingUtil";
+import ThemeButton from "../ui/ThemeButton";
 
 const videoConstraints = {
   width: 480,
@@ -21,8 +20,6 @@ function WebcamSection() {
     <>
       <div className="container">
         <section className="videosection">
-          {/* <Coordinates poseData={poseData} /> */}
-
           <Webcam
             width={videoConstraints.width}
             height={videoConstraints.height}

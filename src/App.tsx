@@ -1,11 +1,11 @@
-import ThemeButton from "./components/vendor/ThemeButton";
 import savePosesToFile from "./utils/savePosesToFile";
-import ErrorTag from "./components/ErrorMessage";
 import { LabeledPose } from "./types/types";
 import WebcamSection from "./components/layouts/WebCamSection";
 import { useRef, useState } from "react";
 import { usePose } from "./context/usePose";
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
+import ErrorTag from "./components/ErrorMessage";
+import ThemeButton from "./components/ui/ThemeButton";
 
 const App = () => {
   // for saving poses as json after capturing
