@@ -1,6 +1,6 @@
 import savePosesToFile from "./utils/savePosesToFile";
 import { LabeledPose } from "./types/types";
-import WebcamSection from "./components/layouts/WebCamSection";
+import WebcamSection from "./components/sections/WebCamSection";
 import { useRef, useState } from "react";
 import { usePose } from "./context/usePose";
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
