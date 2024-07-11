@@ -67,7 +67,7 @@ const PoseFormSection = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="grid">
       <WebcamSection />
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
