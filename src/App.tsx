@@ -1,3 +1,4 @@
+import { ModelSettingsSection } from "./components/sections/ModelSettingsSection";
 import PoseFormSection from "./components/sections/PoseFormSection";
 
 const App = () => {
