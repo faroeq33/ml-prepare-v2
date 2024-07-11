@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { usePose } from "./context/usePose";
 import { NormalizedLandmark } from "@mediapipe/tasks-vision";
 import ErrorTag from "./components/ErrorMessage";
-import ThemeButton from "./components/ui/ThemeButton";
+import ThemeButton from "./components/ui/buttons/ThemeButton";
 
 const App = () => {
   // for saving poses as json after capturing
