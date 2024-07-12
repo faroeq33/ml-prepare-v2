@@ -1,107 +1,102 @@
-import { Label } from "@/components/ui/label";
-import { useId, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/buttons/shadcnbutton/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Cpu, Monitor } from "lucide-react";
+} from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
-export function ModelSettingsSection() {
-  const [handedness, setHandedness] = useState<1 | 2>(1);
+const FormSchema = z.object({
+  delegate: z.string().optional(),
+  handedness: z.string().optional(),
+});
+
+function ModelSettingsSection() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    localStorage.setItem("handLandMarkerOptions", JSON.stringify(data));
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
 
   return (
-    <div className="grid h-screen w-full pl-[56px]">
-      <div className="flex flex-col">
-        <main className="grid flex-1 gap-4 p-4 overflow-auto md:grid-cols-2 lg:grid-cols-3">
-          <div
-            className="relative flex-col items-start hidden gap-8 md:flex"
-            x-chunk="dashboard-03-chunk-0"
-          >
-            <form className="grid items-start w-full gap-6">
-              <fieldset className="grid gap-6 p-4 border rounded-lg">
-                <legend className="px-1 -ml-1 text-lg">Settings</legend>
-
-                {/* Add selection for cpu|gpu for adjusting handedness */}
-                <Field label="Delegate">
-                  <Select>
-                    <SelectTrigger
-                      id="model"
-                      className="items-start [&_[data-description]]:hidden"
-                    >
-                      <SelectValue placeholder="Select a model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="genesis">
-                        <div className="flex items-start gap-3 text-muted-foreground">
-                          <Monitor className="size-5" />
-                          <div className="grid gap-0.5">
-                            <p>
-                              <span className="font-medium text-foreground">
-                                GPU
-                              </span>
-                            </p>
-                            <p className="text-xs" data-description>
-                              Our fastest model for general use cases.
-                            </p>
-                          </div>
-                        </div>
-                      </SelectItem>
-
-                      <SelectItem value="cpu">
-                        <div className="flex items-start gap-3 text-muted-foreground">
-                          <Cpu className="size-5" />
-                          <div className="grid gap-0.5">
-                            <p>
-                              <span className="font-medium text-foreground">
-                                CPU
-                              </span>
-                            </p>
-                            <p className="text-xs" data-description>
-                              The most powerful model for complex computations.
-                            </p>
-                          </div>
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-
-                {/* Add slider for adjusting handedness */}
-                <div className="grid gap-3">
-                  <Label htmlFor="handedness">
-                    handedness :{" "}
-                    <span className="text-muted">{handedness}</span>
-                  </Label>
-
-                  <input
-                    type="range"
-                    min={1}
-                    max={2}
-                    value={handedness}
-                    className="transparent h-[4px] w-full cursor-pointer appearance-none border-transparent bg-neutral-200 dark:bg-neutral-600"
-                    onChange={(e) =>
-                      setHandedness(Number(e.target.value) as 1 | 2)
-                    }
-                  />
-                </div>
-              </fieldset>
-            </form>
-          </div>
-        </main>
-      </div>
-    </div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <FormField
+          control={form.control}
+          name="handedness"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize">{field.name}</FormLabel>
+              <FormDescription>
+                Pick the number of hands to detect.
+              </FormDescription>{" "}
+              <Select onValueChange={field.onChange} defaultValue={"1"}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="delegate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="capitalize">{field.name}</FormLabel>
+              <FormDescription>
+                Select the computing delegate to use.
+              </FormDescription>
+              <Select onValueChange={field.onChange} defaultValue={"GPU"}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a model" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="GPU">GPU</SelectItem>
+                  <SelectItem value="CPU">CPU</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
   );
 }
-
-const Field = (props: { label: string; children: React.ReactNode }) => {
-  return (
-    <div key={useId()} className="grid gap-3">
-      <Label htmlFor={props.label}>{props.label}</Label>
-      {props.children}
-      {/* <Slider defaultValue={[0]} max={2} step={1} /> */}
-    </div>
-  );
-};
+export default ModelSettingsSection;

@@ -1,6 +1,7 @@
+import ModelSettingsSection from "./components/sections/ModelSettingsSection";
 import HorizontalNavSection from "./components/sections/HorizontalNavSection";
-import { ModelSettingsSection } from "./components/sections/ModelSettingsSection";
 import PoseFormSection from "./components/sections/PoseFormSection";
+import { Toaster } from "./components/ui/toaster";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </>
   );
 };

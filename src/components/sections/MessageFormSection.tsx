@@ -1,5 +1,5 @@
 import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../ui/buttons/shadcnbutton/button";
 import { Label } from "../ui/label";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Textarea } from "../ui/textarea";

@@ -1,5 +1,5 @@
 import { Bird, Rabbit, Settings, Share, Turtle } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../ui/buttons/shadcnbutton/button";
 import {
   Drawer,
   DrawerContent,
