@@ -67,7 +67,7 @@ const PoseFormSection = () => {
   }
 
   return (
-    <div className="grid">
+    <>
       <WebcamSection />
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
@@ -125,7 +125,7 @@ const PoseFormSection = () => {
       >
         Export poses in Json 💾
       </ThemeButton>
-    </div>
+    </>
   );
 };
 
