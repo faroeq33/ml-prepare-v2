@@ -68,7 +68,7 @@ const PoseFormSection = () => {
 
   return (
     <>
-      <WebcamSection />
+      {/* <WebcamSection /> */}
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
       <div>

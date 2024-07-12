@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-muted {
+  color: #6c757d;
+}
 .videosection {
   /* background-color: rgb(70, 70, 70); */
   height: 270px;

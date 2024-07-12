@@ -1,16 +1,17 @@
-import { Bird, Rabbit, Turtle } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useId, useState } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../ui/select";
+import { Cpu, Monitor } from "lucide-react";
 
 export function ModelSettingsSection() {
+  const [handedness, setHandedness] = useState<1 | 2>(1);
+
   return (
     <div className="grid h-screen w-full pl-[56px]">
       <div className="flex flex-col">
@@ -21,11 +22,10 @@ export function ModelSettingsSection() {
           >
             <form className="grid items-start w-full gap-6">
               <fieldset className="grid gap-6 p-4 border rounded-lg">
-                <legend className="px-1 -ml-1 text-sm font-medium">
-                  Settings
-                </legend>
-                <div className="grid gap-3">
-                  <Label htmlFor="model">Model</Label>
+                <legend className="px-1 -ml-1 text-lg">Settings</legend>
+
+                {/* Add selection for cpu|gpu for adjusting handedness */}
+                <Field label="Delegate">
                   <Select>
                     <SelectTrigger
                       id="model"
@@ -36,12 +36,11 @@ export function ModelSettingsSection() {
                     <SelectContent>
                       <SelectItem value="genesis">
                         <div className="flex items-start gap-3 text-muted-foreground">
-                          <Rabbit className="size-5" />
+                          <Monitor className="size-5" />
                           <div className="grid gap-0.5">
                             <p>
-                              Neural
                               <span className="font-medium text-foreground">
-                                Genesis
+                                GPU
                               </span>
                             </p>
                             <p className="text-xs" data-description>
@@ -50,30 +49,14 @@ export function ModelSettingsSection() {
                           </div>
                         </div>
                       </SelectItem>
-                      <SelectItem value="explorer">
+
+                      <SelectItem value="cpu">
                         <div className="flex items-start gap-3 text-muted-foreground">
-                          <Bird className="size-5" />
+                          <Cpu className="size-5" />
                           <div className="grid gap-0.5">
                             <p>
-                              Neural{" "}
                               <span className="font-medium text-foreground">
-                                Explorer
-                              </span>
-                            </p>
-                            <p className="text-xs" data-description>
-                              Performance and speed for efficiency.
-                            </p>
-                          </div>
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="quantum">
-                        <div className="flex items-start gap-3 text-muted-foreground">
-                          <Turtle className="size-5" />
-                          <div className="grid gap-0.5">
-                            <p>
-                              Neural{" "}
-                              <span className="font-medium text-foreground">
-                                Quantum
+                                CPU
                               </span>
                             </p>
                             <p className="text-xs" data-description>
@@ -84,20 +67,41 @@ export function ModelSettingsSection() {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </Field>
+
+                {/* Add slider for adjusting handedness */}
                 <div className="grid gap-3">
-                  <Label htmlFor="temperature">Temperature</Label>
-                  <Input id="temperature" type="number" placeholder="0.4" />
+                  <Label htmlFor="handedness">
+                    handedness :{" "}
+                    <span className="text-muted">{handedness}</span>
+                  </Label>
+
+                  <input
+                    type="range"
+                    min={1}
+                    max={2}
+                    value={handedness}
+                    className="transparent h-[4px] w-full cursor-pointer appearance-none border-transparent bg-neutral-200 dark:bg-neutral-600"
+                    onChange={(e) =>
+                      setHandedness(Number(e.target.value) as 1 | 2)
+                    }
+                  />
                 </div>
               </fieldset>
             </form>
-          </div>
-          <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2">
-            <div className="flex-1" />
-            {/* <MessageForm /> */}
           </div>
         </main>
       </div>
     </div>
   );
 }
+
+const Field = (props: { label: string; children: React.ReactNode }) => {
+  return (
+    <div key={useId()} className="grid gap-3">
+      <Label htmlFor={props.label}>{props.label}</Label>
+      {props.children}
+      {/* <Slider defaultValue={[0]} max={2} step={1} /> */}
+    </div>
+  );
+};
