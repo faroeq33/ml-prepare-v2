@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
-const Form = FormProvider;
+// const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -78,18 +78,19 @@ const FormItemContext = createContext<FormItemContextValue>(
   {} as FormItemContextValue
 );
 
-const FormItem = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => {
-    const id = useId();
+const FormItemProvider = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const id = useId();
 
-    return (
-      <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn("space-y-2", className)} {...props} />
-      </FormItemContext.Provider>
-    );
-  }
-);
-FormItem.displayName = "FormItem";
+  return (
+    <FormItemContext.Provider value={{ id }}>
+      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+    </FormItemContext.Provider>
+  );
+});
+FormItemProvider.displayName = "FormItem";
 
 const FormLabel = forwardRef<
   ElementRef<typeof Root>,
@@ -177,8 +178,8 @@ FormMessage.displayName = "FormMessage";
 
 export {
   useFormField,
-  Form,
-  FormItem,
+  FormProvider,
+  FormItemProvider,
   FormLabel,
   FormControl,
   FormDescription,

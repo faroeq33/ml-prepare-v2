@@ -1,14 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Schema, z } from "zod";
 
 import { Button } from "@/components/ui/buttons/shadcnbutton/button";
 import {
-  Form,
+  FormProvider,
   FormControl,
   FormDescription,
   FormField,
-  FormItem,
+  FormItemProvider,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
@@ -20,29 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { getDefaultSettings } from "@/utils/HandLandmarker";
-
-// The formschema is used to configure handLandmarker settings
-const formSchema = z.object({
-  baseOptions: z.object({
-    modelAssetPath: z.string().url(),
-    delegate: z.enum(["GPU", "CPU"]),
-  }),
-  minTrackingConfidence: z.coerce.number().min(0.1).max(1),
-  minHandDetectionConfidence: z.coerce.number(),
-  minHandPresenceConfidence: z.coerce.number(),
-  // Uncomment the following line if runningMode should be included in the schema
-  // runningMode: z.enum(["VIDEO"]),
-  numHands: z.coerce.number().min(1).max(2),
-});
-
-// const defaultFormValues = ;
-
-type Schema = z.input<typeof formSchema>;
+import {
+  getDefaultSettings,
+  HandLandmarkerSettings,
+  HandLandmarkerSettingsSchema,
+} from "@/utils/HandLandmarker";
 
 function ModelSettingsSection() {
-  const form = useForm<Schema>({
-    resolver: zodResolver(formSchema),
+  const methods = useForm<HandLandmarkerSettings>({
+    resolver: zodResolver(HandLandmarkerSettingsSchema),
     defaultValues: {
       baseOptions: {
         modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
@@ -51,18 +36,18 @@ function ModelSettingsSection() {
       minTrackingConfidence: 0.5,
       minHandDetectionConfidence: 0.5,
       minHandPresenceConfidence: 0.5,
-      // runningMode: "VIDEO",
+      runningMode: "VIDEO",
       numHands: 1,
     },
     values: getDefaultSettings(), // Load the default settings from local storage
     mode: "onSubmit",
   });
 
-  function onSubmit(data: Schema) {
-    const result = formSchema.parse(data);
+  function onSubmit(data: HandLandmarkerSettings) {
+    const result = HandLandmarkerSettingsSchema.parse(data);
     console.log(result);
     localStorage.setItem("handLandMarkerOptions", JSON.stringify(data));
-    console.log("sent");
+    console.log("Saved to local storage");
 
     toast({
       title: "You submitted the following values:",
@@ -73,24 +58,22 @@ function ModelSettingsSection() {
       ),
     });
   }
-  // const onSubmit = (data: Schema) => {
-  //   console.log(data);
-  // };
-  const onError = (errors) => {
+
+  const onError = (errors: unknown) => {
     console.log(errors);
   };
 
   return (
-    <Form {...form}>
+    <FormProvider {...methods}>
       <form
-        onSubmit={form.handleSubmit(onSubmit, onError)}
+        onSubmit={methods.handleSubmit(onSubmit, onError)}
         className="w-2/3 space-y-6"
       >
         <FormField
-          control={form.control}
+          control={methods.control}
           name="numHands"
           render={({ field }) => (
-            <FormItem>
+            <FormItemProvider>
               <FormLabel className="capitalize">{field.name}</FormLabel>
               <FormDescription>
                 Pick the number of hands to detect.
@@ -108,14 +91,14 @@ function ModelSettingsSection() {
                 </SelectContent>
               </Select>
               <FormMessage />
-            </FormItem>
+            </FormItemProvider>
           )}
         />
         <FormField
-          control={form.control}
+          control={methods.control}
           name="baseOptions.delegate"
           render={({ field }) => (
-            <FormItem>
+            <FormItemProvider>
               <FormLabel className="capitalize">{field.name}</FormLabel>
               <FormDescription>
                 Select the computing delegate to use.
@@ -132,12 +115,12 @@ function ModelSettingsSection() {
                 </SelectContent>
               </Select>
               <FormMessage />
-            </FormItem>
+            </FormItemProvider>
           )}
         />
         <Button type="submit">Submit</Button>
       </form>
-    </Form>
+    </FormProvider>
   );
 }
 export default ModelSettingsSection;

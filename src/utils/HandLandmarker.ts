@@ -1,10 +1,9 @@
-import {
-  FilesetResolver,
-  HandLandmarker,
-  HandLandmarkerOptions,
-} from "@mediapipe/tasks-vision";
+import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
+import { z } from "zod";
 
-const initialize = async (handLandmarkerOptions: HandLandmarkerOptions) => {
+export const initialize = async (
+  handLandmarkerOptions: HandLandmarkerSettings
+) => {
   try {
     // Load the vision tasks fileset resolver
     const vision = await FilesetResolver.forVisionTasks(
@@ -24,7 +23,7 @@ const initialize = async (handLandmarkerOptions: HandLandmarkerOptions) => {
   }
 };
 
-const getDefaultSettings = (): HandLandmarkerOptions => {
+export const getDefaultSettings = (): HandLandmarkerSettings => {
   const settings = localStorage.getItem("handLandMarkerOptions");
 
   // if settings exist in local storage, parse and return them otherwise return default settings
@@ -39,8 +38,28 @@ const getDefaultSettings = (): HandLandmarkerOptions => {
     minTrackingConfidence: 0.5,
     minHandDetectionConfidence: 0.5,
     minHandPresenceConfidence: 0.5,
-    // runningMode: "VIDEO",
+    runningMode: "VIDEO",
     numHands: 1,
   };
 };
-export { initialize, getDefaultSettings };
+
+const confidenceRange = () => {
+  return z.coerce.number().min(0.0).max(1).optional();
+};
+
+// The formschema is used to configure handLandmarker settings
+export const HandLandmarkerSettingsSchema = z.object({
+  baseOptions: z.object({
+    modelAssetPath: z.string().url().optional(),
+    delegate: z.enum(["GPU", "CPU"]).optional(),
+  }),
+  minTrackingConfidence: confidenceRange(),
+  minHandDetectionConfidence: confidenceRange(),
+  minHandPresenceConfidence: confidenceRange(),
+  runningMode: z.enum(["VIDEO", "IMAGE"]).optional(),
+  numHands: z.coerce.number().min(1).max(2).optional(),
+});
+
+export type HandLandmarkerSettings = z.infer<
+  typeof HandLandmarkerSettingsSchema
+>;
