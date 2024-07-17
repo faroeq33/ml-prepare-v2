@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Schema, z } from "zod";
 
 import { Button } from "@/components/ui/buttons/shadcnbutton/button";
 import {
@@ -20,19 +20,50 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { getDefaultSettings } from "@/utils/HandLandmarker";
 
-const FormSchema = z.object({
-  delegate: z.string().optional(),
-  handedness: z.string().optional(),
+// The formschema is used to configure handLandmarker settings
+const formSchema = z.object({
+  baseOptions: z.object({
+    modelAssetPath: z.string().url(),
+    delegate: z.enum(["GPU", "CPU"]),
+  }),
+  minTrackingConfidence: z.coerce.number().min(0.1).max(1),
+  minHandDetectionConfidence: z.coerce.number(),
+  minHandPresenceConfidence: z.coerce.number(),
+  // Uncomment the following line if runningMode should be included in the schema
+  // runningMode: z.enum(["VIDEO"]),
+  numHands: z.coerce.number().min(1).max(2),
 });
 
+// const defaultFormValues = ;
+
+type Schema = z.input<typeof formSchema>;
+
 function ModelSettingsSection() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<Schema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      baseOptions: {
+        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+        delegate: "GPU",
+      },
+      minTrackingConfidence: 0.5,
+      minHandDetectionConfidence: 0.5,
+      minHandPresenceConfidence: 0.5,
+      // runningMode: "VIDEO",
+      numHands: 1,
+    },
+    values: getDefaultSettings(), // Load the default settings from local storage
+    mode: "onSubmit",
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: Schema) {
+    const result = formSchema.parse(data);
+    console.log(result);
     localStorage.setItem("handLandMarkerOptions", JSON.stringify(data));
+    console.log("sent");
+
     toast({
       title: "You submitted the following values:",
       description: (
@@ -42,23 +73,33 @@ function ModelSettingsSection() {
       ),
     });
   }
+  // const onSubmit = (data: Schema) => {
+  //   console.log(data);
+  // };
+  const onError = (errors) => {
+    console.log(errors);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, onError)}
+        className="w-2/3 space-y-6"
+      >
         <FormField
           control={form.control}
-          name="handedness"
+          name="numHands"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="capitalize">{field.name}</FormLabel>
               <FormDescription>
                 Pick the number of hands to detect.
-              </FormDescription>{" "}
-              <Select onValueChange={field.onChange} defaultValue={"1"}>
+              </FormDescription>
+
+              <Select onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a model" />
+                    <SelectValue placeholder="Select number of hands" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -72,14 +113,14 @@ function ModelSettingsSection() {
         />
         <FormField
           control={form.control}
-          name="delegate"
+          name="baseOptions.delegate"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="capitalize">{field.name}</FormLabel>
               <FormDescription>
                 Select the computing delegate to use.
               </FormDescription>
-              <Select onValueChange={field.onChange} defaultValue={"GPU"}>
+              <Select onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a model" />

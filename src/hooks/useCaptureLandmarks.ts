@@ -1,28 +1,10 @@
-import { HandLandmarker, HandLandmarkerOptions } from "@mediapipe/tasks-vision";
-import { useEffect, useMemo, useRef } from "react";
-import createHandLandmarker from "../utils/createHandLandmarker";
+import { HandLandmarker } from "@mediapipe/tasks-vision";
+import { useEffect, useRef } from "react";
+import * as hlmSettings from "../utils/HandLandmarker";
 import { usePose } from "../context/usePose";
-// import { useLocalStorage } from "usehooks-ts";
 
 function useCaptureLandmarks() {
   const { webcamRef, setPoseData } = usePose();
-
-  // TODO: Get hl settings from local storage otherwise use default settings
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handLandmarkerSettings: HandLandmarkerOptions = useMemo(
-    () => ({
-      baseOptions: {
-        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-        delegate: "GPU",
-      },
-      minTrackingConfidence: 0.5,
-      minHandDetectionConfidence: 0.5,
-      minHandPresenceConfidence: 0.5,
-      runningMode: "VIDEO",
-      numHands: 1,
-    }),
-    []
-  );
 
   // for canceling the animation frame
   const requestIdRef = useRef<number | null>(null);
@@ -47,9 +29,13 @@ function useCaptureLandmarks() {
     };
 
     const initializeHandLandmarker = async () => {
-      const handLandMarker = await createHandLandmarker(handLandmarkerSettings);
+      // TODO: Get hl settings from local storage otherwise use default settings
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      const handLandMarker = await hlmSettings.initialize(
+        hlmSettings.getDefaultSettings()
+      );
       if (!landmarkerRef.current) {
-        console.log("something");
         landmarkerRef.current = handLandMarker;
         console.log("handlandmarker is created!");
       }
@@ -59,7 +45,7 @@ function useCaptureLandmarks() {
 
     // how do I know if my animationframe is running?
     return () => cancelAnimationFrame(requestIdRef.current);
-  }, [setPoseData, webcamRef, handLandmarkerSettings]);
+  }, [setPoseData, webcamRef]);
 }
 
 export default useCaptureLandmarks;
