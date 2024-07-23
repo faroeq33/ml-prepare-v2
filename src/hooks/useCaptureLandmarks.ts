@@ -7,14 +7,18 @@ function useCaptureLandmarks() {
   const { webcamRef, setPoseData } = usePose();
 
   // for canceling the animation frame
-  const requestIdRef = useRef<number | null>(null);
+  const requestIdRef = useRef<number>(0);
 
   // Ref for landmarker in order to capture poses
-  const landmarkerRef = useRef<HandLandmarker | null>(null);
+  const landmarkerRef = useRef<HandLandmarker | null | undefined>(null);
 
   useEffect(() => {
     const capture = async () => {
-      if (landmarkerRef.current) {
+      if (
+        landmarkerRef.current &&
+        webcamRef.current &&
+        webcamRef.current.video
+      ) {
         if (webcamRef.current.video.currentTime > 0) {
           const result = await landmarkerRef.current.detectForVideo(
             webcamRef.current.video,
@@ -29,15 +33,17 @@ function useCaptureLandmarks() {
     };
 
     const initializeHandLandmarker = async () => {
-      // TODO: Get hl settings from local storage otherwise use default settings
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-
-      const handLandMarker = await hlmSettings.initialize(
-        hlmSettings.getDefaultSettings()
-      );
-      if (!landmarkerRef.current) {
-        landmarkerRef.current = handLandMarker;
-        console.log("handlandmarker is created!");
+      try {
+        // Get hl settings from local storage otherwise use default settings
+        const handLandMarker = await hlmSettings.initialize(
+          hlmSettings.getDefaultSettings()
+        );
+        if (!landmarkerRef.current) {
+          landmarkerRef.current = handLandMarker;
+          console.log("handlandmarker is created!");
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
 

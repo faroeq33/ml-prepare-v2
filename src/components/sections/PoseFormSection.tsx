@@ -11,10 +11,11 @@ const PoseFormSection = () => {
   // for saving poses as json after capturing
   const { poseData } = usePose();
 
+  // for saving poses after capturing
   const myPoses = useRef<LabeledPose[]>([]);
 
   // for displaying poses in the textarea
-  const [poseOutput, setPoseOutput] = useState<string | null>(null);
+  const [poseOutput, setPoseOutput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState("");
   const [dataLabel, setLabel] = useState("");
 
@@ -68,7 +69,7 @@ const PoseFormSection = () => {
 
   return (
     <>
-      {/* <WebcamSection /> */}
+      <WebcamSection />
       {errorMessage.length > 0 && <ErrorTag message={errorMessage} />}
 
       <div>

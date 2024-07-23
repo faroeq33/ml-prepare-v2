@@ -10,21 +10,26 @@ function useDrawingUtil() {
   const drawingUtilsRef = useRef<DrawingUtils | null>(null);
 
   const initializeDrawingUtils = useCallback(() => {
-    const ctx = canvasRef.current.getContext("2d");
-    if (!drawingUtilsRef.current) {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (ctx && !drawingUtilsRef.current) {
       drawingUtilsRef.current = new DrawingUtils(ctx);
       console.log("DrawingUtils created");
     }
   }, [canvasRef, drawingUtilsRef]);
 
+  const clearScreen = useCallback(() => {
+    canvasRef.current?.getContext("2d")?.clearRect(0, 0, 480, 270);
+  }, [canvasRef]);
+
   const clearDrawingUtils = useCallback(() => {
     if (drawingUtilsRef.current) {
       drawingUtilsRef.current.close();
       drawingUtilsRef.current = null;
-      const canvasContext = canvasRef.current.getContext("2d");
-      canvasContext.clearRect(0, 0, 480, 270);
+      clearScreen();
+
+      // canvasRef.current?.getContext("2d")?.clearRect(0, 0, 480, 270);
     }
-  }, [canvasRef, drawingUtilsRef]);
+  }, [drawingUtilsRef, clearScreen]);
 
   useEffect(() => {
     initializeDrawingUtils();
@@ -37,8 +42,7 @@ function useDrawingUtil() {
     // }
     if (drawingUtilsRef.current) {
       // erase the previous frame
-      const canvasContext = canvasRef.current.getContext("2d");
-      canvasContext.clearRect(0, 0, 480, 270);
+      clearScreen();
 
       // Draw connectors between hand landmarks
       for (const hand of poseData) {
@@ -55,7 +59,7 @@ function useDrawingUtil() {
         });
       }
     }
-  }, [poseData, canvasRef, drawingUtilsRef]);
+  }, [poseData, drawingUtilsRef, clearScreen]);
 
   function toggleDraw() {
     setDrawing((prevState) => !prevState);

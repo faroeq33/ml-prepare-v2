@@ -83,7 +83,7 @@ function ModelSettingsSection() {
 
               <Select
                 onValueChange={field.onChange}
-                defaultValue={defaultSettings.numHands.toString()}
+                defaultValue={defaultSettings.numHands?.toString() ?? "1"}
               >
                 <FormControl>
                   <SelectTrigger>

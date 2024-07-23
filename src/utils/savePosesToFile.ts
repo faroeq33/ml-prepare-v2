@@ -1,4 +1,6 @@
-function savePosesToFile(myPoses) {
+import { LabeledPose } from "@/types/types";
+
+function savePosesToFile(myPoses: LabeledPose[]) {
   const currentdate = new Date();
   const datetime =
     currentdate.getDate() +
