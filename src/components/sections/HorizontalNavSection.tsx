@@ -1,4 +1,4 @@
-import { Bird, Rabbit, Settings, Share, Turtle } from "lucide-react";
+import { Bird, Rabbit, Settings, Turtle } from "lucide-react";
 import { Button } from "../ui/buttons/shadcnbutton/button";
 import {
   Drawer,
@@ -105,7 +105,7 @@ function HorizontalNavSection() {
                 </Select>
               </div>
               <div className="grid gap-3">
-                <Label htmlForn="temperature">Temperature</Label>
+                <Label htmlFor="temperature">Temperature</Label>
                 <Input id="temperature" type="number" placeholder="0.4" />
               </div>
               <div className="grid gap-3">
