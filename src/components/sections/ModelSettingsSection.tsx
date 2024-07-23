@@ -25,6 +25,8 @@ import {
   HandLandmarkerSettingsSchema,
 } from "@/utils/HandLandmarker";
 
+const defaultSettings = getDefaultSettings();
+
 function ModelSettingsSection() {
   const methods = useForm<HandLandmarkerSettings>({
     resolver: zodResolver(HandLandmarkerSettingsSchema),
@@ -39,7 +41,7 @@ function ModelSettingsSection() {
       runningMode: "VIDEO",
       numHands: 1,
     },
-    values: getDefaultSettings(), // Load the default settings from local storage
+    values: defaultSettings, // Load the default settings from local storage
     mode: "onSubmit",
   });
 
@@ -79,7 +81,10 @@ function ModelSettingsSection() {
                 Pick the number of hands to detect.
               </FormDescription>
 
-              <Select onValueChange={field.onChange}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={defaultSettings.numHands.toString()}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select number of hands" />
@@ -87,7 +92,8 @@ function ModelSettingsSection() {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
+                  {/* This application only supports 1 hand for now */}
+                  {/* <SelectItem value="2">2</SelectItem> */}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -103,7 +109,10 @@ function ModelSettingsSection() {
               <FormDescription>
                 Select the computing delegate to use.
               </FormDescription>
-              <Select onValueChange={field.onChange}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={defaultSettings.baseOptions.delegate}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a model" />
@@ -111,7 +120,8 @@ function ModelSettingsSection() {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="GPU">GPU</SelectItem>
-                  <SelectItem value="CPU">CPU</SelectItem>
+                  {/* Cpu commented because cpu is just too slow on my machine */}
+                  {/* <SelectItem value="CPU">CPU</SelectItem> */}
                 </SelectContent>
               </Select>
               <FormMessage />
