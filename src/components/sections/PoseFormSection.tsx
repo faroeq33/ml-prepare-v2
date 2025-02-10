@@ -121,7 +121,10 @@ const PoseFormSection = () => {
             return;
           }
 
-          savePosesToFile(myPoses.current);
+          savePosesToFile(myPoses.current, {
+            datetime: new Date().toISOString(),
+            totalPoses: myPoses.current.length,
+          });
         }}
       >
         Export poses in Json 💾

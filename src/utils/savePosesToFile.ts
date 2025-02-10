@@ -1,6 +1,6 @@
 import { LabeledPose } from "@/types/types";
 
-function savePosesToFile(myPoses: LabeledPose[]) {
+function savePosesToFile(myPoses: LabeledPose[], metaData: object) {
   const currentdate = new Date();
   const datetime =
     currentdate.getDate() +
@@ -16,7 +16,14 @@ function savePosesToFile(myPoses: LabeledPose[]) {
     currentdate.getSeconds() +
     "s";
 
-  const finalPoses = JSON.stringify({ data: myPoses }, null, 2);
+  const finalPoses = JSON.stringify(
+    {
+      data: myPoses,
+      metaData: metaData,
+    },
+    null,
+    2
+  );
   const blob = new Blob([finalPoses], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
