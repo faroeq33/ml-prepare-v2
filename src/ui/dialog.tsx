@@ -100,7 +100,7 @@ const DialogTitle = forwardRef<
   <Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-lg font-semibold tracking-tight leading-none",
       className
     )}
     {...props}

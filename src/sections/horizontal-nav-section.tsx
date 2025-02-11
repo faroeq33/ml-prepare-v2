@@ -38,8 +38,8 @@ function HorizontalNavSection() {
               Configure the settings for the model and messages.
             </DrawerDescription>
           </DrawerHeader>
-          <form className="grid items-start w-full gap-6 p-4 pt-0 overflow-auto">
-            <fieldset className="grid gap-6 p-4 border rounded-lg">
+          <form className="grid overflow-auto gap-6 items-start p-4 pt-0 w-full">
+            <fieldset className="grid gap-6 p-4 rounded-lg border">
               <legend className="px-1 -ml-1 text-sm font-medium">
                 Settings
               </legend>
@@ -54,7 +54,7 @@ function HorizontalNavSection() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="genesis">
-                      <div className="flex items-start gap-3 text-muted-foreground">
+                      <div className="flex gap-3 items-start text-muted-foreground">
                         <Rabbit className="size-5" />
                         <div className="grid gap-0.5">
                           <p>
@@ -70,7 +70,7 @@ function HorizontalNavSection() {
                       </div>
                     </SelectItem>
                     <SelectItem value="explorer">
-                      <div className="flex items-start gap-3 text-muted-foreground">
+                      <div className="flex gap-3 items-start text-muted-foreground">
                         <Bird className="size-5" />
                         <div className="grid gap-0.5">
                           <p>
@@ -86,7 +86,7 @@ function HorizontalNavSection() {
                       </div>
                     </SelectItem>
                     <SelectItem value="quantum">
-                      <div className="flex items-start gap-3 text-muted-foreground">
+                      <div className="flex gap-3 items-start text-muted-foreground">
                         <Turtle className="size-5" />
                         <div className="grid gap-0.5">
                           <p>
