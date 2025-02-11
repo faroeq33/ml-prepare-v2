@@ -1,7 +1,7 @@
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import { z } from "zod";
 
-export const initialize = async (
+export const createHandlandmarker = async (
   handLandmarkerOptions: HandLandmarkerSettings
 ) => {
   try {

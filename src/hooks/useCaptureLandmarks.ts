@@ -1,6 +1,10 @@
 import { HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef } from "react";
 import usePose from "@/context/usePose";
+import {
+  createHandlandmarker,
+  getDefaultSettings,
+} from "@/utils/hand-landmarker";
 
 function useCaptureLandmarks() {
   const { webcamRef, setPoseData } = usePose();
@@ -34,9 +38,7 @@ function useCaptureLandmarks() {
     const initializeHandLandmarker = async () => {
       try {
         // Get hl settings from local storage otherwise use default settings
-        const handLandMarker = await hlmSettings.initialize(
-          hlmSettings.getDefaultSettings()
-        );
+        const handLandMarker = await createHandlandmarker(getDefaultSettings());
         if (!landmarkerRef.current) {
           landmarkerRef.current = handLandMarker;
           console.log("handlandmarker is created!");
