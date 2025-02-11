@@ -23,7 +23,7 @@ import {
   getDefaultSettings,
   HandLandmarkerSettings,
   HandLandmarkerSettingsSchema,
-} from "@/utils/HandLandmarker";
+} from "@/utils/hand-landmarker";
 
 const defaultSettings = getDefaultSettings();
 
