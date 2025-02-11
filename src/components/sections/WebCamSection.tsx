@@ -1,8 +1,8 @@
-import { usePose } from "@/context/usePose";
 import useCaptureLandmarks from "@/hooks/useCaptureLandmarks";
 import useDrawingUtil from "@/hooks/useDrawingUtil";
 import Webcam from "react-webcam";
 import ThemeButton from "../ui/buttons/ThemeButton";
+import usePose from "@/context/usePose";
 
 const videoConstraints = {
   width: 480,

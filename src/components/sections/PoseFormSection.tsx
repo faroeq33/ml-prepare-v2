@@ -2,7 +2,7 @@ import WebcamSection from "./WebCamSection";
 import { useRef, useState } from "react";
 import convertPoseToVector from "@/utils/convert-pose-to-vector";
 import { LabeledPose } from "@/types/types";
-import { usePose } from "@/context/usePose";
+import usePose from "@/context/usePose";
 import ThemeButton from "../ui/buttons/ThemeButton";
 import ErrorTag from "../ErrorMessage";
 import savePosesToFile from "@/utils/savePosesToFile";
@@ -71,7 +71,7 @@ const PoseFormSection = () => {
         >
           My label : {dataLabel}
         </label>
-        <div className="mt-2 ">
+        <div className="mt-2">
           <input
             type="text"
             name="dataLabel"
@@ -95,7 +95,7 @@ const PoseFormSection = () => {
 
       {myPoses.current.length > 0 && (
         <textarea
-          className="w-full overflow-x-scroll"
+          className="overflow-x-scroll w-full"
           rows={10}
           value={poseOutput}
         />
