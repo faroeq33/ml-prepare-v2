@@ -1,7 +1,7 @@
-import ModelSettingsSection from "./components/sections/ModelSettingsSection";
-import HorizontalNavSection from "./components/sections/HorizontalNavSection";
-import PoseFormSection from "./components/sections/PoseFormSection";
-import { Toaster } from "./components/ui/toaster";
+import HorizontalNavSection from "./sections/horizontal-nav-section";
+import ModelSettingsSection from "./sections/model-settings-section";
+import PoseFormSection from "./sections/pose-form-section";
+import { Toaster } from "./ui/toaster";
 
 const App = () => {
   return (
