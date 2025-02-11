@@ -1,11 +1,11 @@
-import savePosesToFile from "../../utils/savePosesToFile";
-import { LabeledPose } from "../../types/types";
 import WebcamSection from "./WebCamSection";
 import { useRef, useState } from "react";
-import { usePose } from "../../context/usePose";
-import { NormalizedLandmark } from "@mediapipe/tasks-vision";
-import ErrorTag from "../ErrorMessage";
+import convertPoseToVector from "@/utils/convert-pose-to-vector";
+import { LabeledPose } from "@/types/types";
+import { usePose } from "@/context/usePose";
 import ThemeButton from "../ui/buttons/ThemeButton";
+import ErrorTag from "../ErrorMessage";
+import savePosesToFile from "@/utils/savePosesToFile";
 
 const PoseFormSection = () => {
   // for saving poses as json after capturing
@@ -44,14 +44,6 @@ const PoseFormSection = () => {
       return;
     }
 
-    function convertPoseToVector(pose: NormalizedLandmark[]) {
-      return pose
-        .map((point) => {
-          return [point.x, point.y]; //commented z because depth is not needed
-        })
-        .flat();
-    }
-
     const labeledPose = {
       label: dataLabel,
       vector: convertPoseToVector(poseData[0]),
@@ -63,9 +55,9 @@ const PoseFormSection = () => {
     setPoseOutput(JSON.stringify(myPoses.current, null, 2));
   };
 
-  function clearErrors() {
+  const clearErrors = () => {
     setErrorMessage("");
-  }
+  };
 
   return (
     <>
@@ -106,7 +98,6 @@ const PoseFormSection = () => {
           className="w-full overflow-x-scroll"
           rows={10}
           value={poseOutput}
-          readOnly
         />
       )}
 
