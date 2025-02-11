@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import convertPoseToVector from "@/utils/convert-pose-to-vector";
 import { LabeledPose } from "@/types/types";
-import usePose from "@/context/usePose";
+import usePose from "@/context/use-pose";
 import savePosesToFile from "@/utils/save-poses-to-file";
 import ErrorTag from "@/ui/error-message";
 import ThemeButton from "@/ui/buttons/ThemeButton";

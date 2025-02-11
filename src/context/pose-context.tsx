@@ -1,10 +1,10 @@
-import { NormalizedLandmark } from "@mediapipe/tasks-vision";
+import { PoseData } from "@/types/types";
 import { ElementRef, ReactNode, createContext, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 // A container where state, refs and functions are defined, has the advantage of type inference
 const PoseContainer = () => {
-  const [poseData, setPoseData] = useState<NormalizedLandmark[][]>([]);
+  const [poseData, setPoseData] = useState<PoseData>([]);
   const webcamRef = useRef<Webcam | null>(null);
 
   // canvasref for drawing landmarks on canvas

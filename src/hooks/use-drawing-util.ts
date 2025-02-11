@@ -1,4 +1,4 @@
-import usePose from "@/context/usePose";
+import usePose from "@/context/use-pose";
 import { DrawingUtils, HandLandmarker } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
 

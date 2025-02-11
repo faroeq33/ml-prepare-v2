@@ -1,7 +1,7 @@
-import useCaptureLandmarks from "@/hooks/useCaptureLandmarks";
-import useDrawingUtil from "@/hooks/useDrawingUtil";
+import useCaptureLandmarks from "@/hooks/use-capture-landmarks";
+import useDrawingUtil from "@/hooks/use-drawing-util";
 import Webcam from "react-webcam";
-import usePose from "@/context/usePose";
+import usePose from "@/context/use-pose";
 import ThemeButton from "@/ui/buttons/ThemeButton";
 
 const videoConstraints = {

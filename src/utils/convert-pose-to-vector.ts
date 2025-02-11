@@ -1,6 +1,6 @@
-import { NormalizedLandmark } from "@mediapipe/tasks-vision";
+import { SinglePose } from "@/types/types";
 
-function convertPoseToVector(pose: NormalizedLandmark[]): number[] {
+function convertPoseToVector(pose: SinglePose): number[] {
   return pose
     .map((point) => {
       return [point.x, point.y]; //commented z because depth is not needed

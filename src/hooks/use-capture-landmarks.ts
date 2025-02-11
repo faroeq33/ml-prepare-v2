@@ -1,6 +1,6 @@
 import { HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef } from "react";
-import usePose from "@/context/usePose";
+import usePose from "@/context/use-pose";
 import {
   createHandlandmarker,
   getDefaultSettings,

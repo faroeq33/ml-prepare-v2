@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/ui/select";
-import { toast } from "@/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import {
   getDefaultSettings,
   HandLandmarkerSettings,
