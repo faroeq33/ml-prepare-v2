@@ -1,11 +1,11 @@
-import WebcamSection from "./WebCamSection";
 import { useRef, useState } from "react";
 import convertPoseToVector from "@/utils/convert-pose-to-vector";
 import { LabeledPose } from "@/types/types";
 import usePose from "@/context/usePose";
 import savePosesToFile from "@/utils/save-poses-to-file";
-import ErrorTag from "@/ui/ErrorMessage";
+import ErrorTag from "@/ui/error-message";
 import ThemeButton from "@/ui/buttons/ThemeButton";
+import WebcamSection from "./webcam-section";
 
 const PoseFormSection = () => {
   // for saving poses as json after capturing
@@ -95,7 +95,7 @@ const PoseFormSection = () => {
 
       {myPoses.current.length > 0 && (
         <textarea
-          className="w-full overflow-x-scroll"
+          className="overflow-x-scroll w-full"
           rows={10}
           value={poseOutput}
           readOnly

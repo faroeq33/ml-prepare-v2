@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { PoseContext } from "./PoseContext";
+import { PoseContext } from "./pose-context";
 
 // A custom hook to use the PoseContext in child components
 function usePose() {

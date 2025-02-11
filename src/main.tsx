@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import React from "react";
-import { PoseProvider } from "./context/PoseContext.tsx";
+import { PoseProvider } from "./context/pose-context.tsx";
 import App from "./App.tsx";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 
