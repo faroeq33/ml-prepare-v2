@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { InputHTMLAttributes, forwardRef } from "react";
 
 import { cn } from "@/utils/cn";

@@ -21,9 +21,11 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps {}
+interface CommandProps extends DialogProps {
+  className?: string;
+}
 
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+const CommandDialog = ({ children, ...props }: CommandProps) => {
   return (
     <Dialog {...props}>
       <DialogContent className="p-0 overflow-hidden shadow-lg">
@@ -39,7 +41,7 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center px-3 border-b" cmdk-input-wrapper="">
+  <div className="flex items-center px-3 border-b cmdk-input-wrapper">
     <Search className="w-4 h-4 mr-2 opacity-50 shrink-0" />
     <CommandPrimitive.Input
       ref={ref}
