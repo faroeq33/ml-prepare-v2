@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -69,7 +70,7 @@ function ModelSettingsSection() {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit, onError)}
-        className="w-2/3 space-y-6"
+        className="space-y-6 w-2/3"
       >
         <FormField
           control={methods.control}

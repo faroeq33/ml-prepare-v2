@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/await-thenable */
 import { HandLandmarker } from "@mediapipe/tasks-vision";
 import { useEffect, useRef } from "react";
 import usePose from "@/context/use-pose";

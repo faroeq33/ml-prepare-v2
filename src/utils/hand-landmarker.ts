@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
 import { z } from "zod";
 

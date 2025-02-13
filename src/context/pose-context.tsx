@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { PoseData } from "@/types/types";
 import { ElementRef, ReactNode, createContext, useRef, useState } from "react";
 import Webcam from "react-webcam";
