@@ -1,6 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { PoseData } from "@/types/types";
-import { ElementRef, ReactNode, createContext, useRef, useState } from "react";
+import {
+  ComponentRef,
+  ReactNode,
+  createContext,
+  useRef,
+  useState,
+} from "react";
 import Webcam from "react-webcam";
 
 // A container where state, refs and functions are defined, has the advantage of type inference
@@ -9,7 +15,7 @@ const PoseContainer = () => {
   const webcamRef = useRef<Webcam | null>(null);
 
   // canvasref for drawing landmarks on canvas
-  const canvasRef = useRef<ElementRef<"canvas">>(null);
+  const canvasRef = useRef<ComponentRef<"canvas">>(null);
 
   return {
     poseData,
