@@ -1,5 +1,5 @@
 import HorizontalNavSection from "./sections/horizontal-nav-section";
-// import ModelSettingsSection from "./sections/model-settings-section";
+import ModelSettingsSection from "./sections/model-settings-section";
 import PoseFormSection from "./sections/pose-form-section";
 import { Toaster } from "./ui/toaster";
 
@@ -16,7 +16,9 @@ const App = () => {
               </div>
             </div>
             <div className="col">
-              <div className="w-full">{/* <ModelSettingsSection /> */}</div>
+              <div className="w-full">
+                <ModelSettingsSection />
+              </div>
             </div>
           </div>
         </div>
