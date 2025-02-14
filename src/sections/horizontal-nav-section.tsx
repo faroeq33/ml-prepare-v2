@@ -1,13 +1,6 @@
 import { Bird, Rabbit, Settings, Turtle } from "lucide-react";
 import { Button } from "../ui/buttons/shadcnbutton/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "../ui/drawer";
+
 import { Label } from "../ui/label";
 import {
   Select,
@@ -17,6 +10,14 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Input } from "../ui/input";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/ui/drawer";
 
 function HorizontalNavSection() {
   return (
