@@ -1,6 +1,5 @@
 import HorizontalNavSection from "./sections/horizontal-nav-section";
 import PoseFormSection from "./sections/pose-form-section";
-import { Toaster } from "./ui/toaster";
 
 const App = () => {
   return (
@@ -17,7 +16,6 @@ const App = () => {
           </div>
         </div>
       </div>
-      <Toaster />
     </>
   );
 };
